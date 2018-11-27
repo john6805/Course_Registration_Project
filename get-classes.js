@@ -38,29 +38,50 @@ axios.get('https://classes.aws.stthomas.edu/index.htm?year=2019&term=20&schoolCo
             section_number: '',
             building: '',
             room: '',
-            professors: '',
+            professors: 'TBD',
             times: '',
             capacity: 0,
             registered: ''
         }
         //course.subject = $(element).find('div[class=columns,small-6,medium-4,large-4]').text();
         courseNumber = $(element).find('span[class=courseOpen]').text().split('-');
+        if(courseNumber[0] == '')
+        {
+            courseNumber = $(element).find('span[class=courseWaitlist]').text().split('-');
+        }
+        if(courseNumber[0] == '')
+        {
+            courseNumber = $(element).find('span[class=courseClosed]').text().split('-');
+        }
         course.course_number = courseNumber[0];
         section.course_number = courseNumber[0];
         section.section_number = courseNumber[1];
-        var creditIndex = $(element).find('div[class="columns hide"]').text();
-        section.crn = creditIndex.substring(creditIndex.indexOf('CRN'));
-        course.credits = parseInt(creditIndex.charAt(creditIndex.indexOf('Cr') - 2));
-        course.name = $(element).find('div[class="columns small-6 medium-4 large-4"]').text();
-        course.name = course.name.substring(10, course.name.length - 9);
-        course.description = $(element).find('p[class="courseInfo"]').text();
-        course.description = course.description.substring(11, course.description.length - 10);
+
+        var courseInfo = $(element).find('div[class="columns hide"]').text();
+        section.crn = parseInt(courseInfo.substring(courseInfo.indexOf('CRN') + 4, courseInfo.indexOf('CRN') + 9));
+        course.credits = parseInt(courseInfo.charAt(courseInfo.indexOf('Cr') - 2));
+
+        var courseHighlight = $(element).find('p[class="courseInfoHighlight"]');
+        section.building = courseHighlight[2].children[0].data.trim();
+        section.building = section.building.substring(0, section.building.length - 4);
+        section.room = $(element).find('span[class="locationHover"]').text().trim();
+
+        course.name = $(element).find('div[class="columns small-6 medium-4 large-4"]').text().trim();
+
+        course.description = $(element).find('p[class="courseInfo"]').text().trim();
+
+        section.professors = $(element).find('a[class="icon-dark-purple-light-purple c2-icon-1-7"]').text().trim();
+        section.professors = (section.professors === '') ? 'TBD' : section.professors;
+
+        var schedule = $(element).find('table[class="courseCalendar"]').find('tr');
+        //console.log(schedule);
+
         sections.push(section);
         courses.push(course);
     });
     //var courses = body.find('div[class=course]')[0];
     //var section = body.find('span[class=courseOpen]')[0];
-    console.log(courses[0]);
+
     for(var i = 0; i < sections.length; i++)
     {
         console.log(sections[i]);
