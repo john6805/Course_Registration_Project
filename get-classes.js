@@ -16,6 +16,7 @@ var days = {
     5: 'Sa',
     6: 'Su'
 }
+//this code will be used for inserting into the departments table, returns a json with all subjects and their abbreviations
 // axios.get('https://classes.aws.stthomas.edu/json/getSubjectList.json?year=2019&term=20&schoolCode=ALL&levelCode=ALL')
 // .then(result => {
 //     console.log(result.data);
@@ -24,108 +25,148 @@ var days = {
 //     console.log(error);
 // });
 
-axios.get('https://classes.aws.stthomas.edu/index.htm?year=2019&term=20&schoolCode=ALL&levelCode=ALL&selectedSubjects=CISC')
-.then(result => {
-    bodyStart = result.data.search('<body>');
-    bodyEnd = result.data.search('</body>');
-    body = result.data.substring(bodyStart, bodyEnd);
-    $ = cheerio.load(body);
-    body = $(body);
+//loop through each subject and get it's courses/sections
+for(var iterator = 0; iterator < subjects.length; iterator++)
+{
+    var currentSubject = subjects[iterator];
+    axios.get('https://classes.aws.stthomas.edu/index.htm?year=2019&term=20&schoolCode=ALL&levelCode=ALL&selectedSubjects=' + currentSubject)
+    .then(result => {
+        //strip the body out of the html
+        bodyStart = result.data.search('<body>');
+        bodyEnd = result.data.search('</body>');
+        body = result.data.substring(bodyStart, bodyEnd);
+        $ = cheerio.load(body);
+        body = $(body);
 
-    $('div[class=course]').each(function(i, element){
-        var course = {
-            subject: 'CISC',
-            course_number: '',
-            credits: 0,
-            name: '',
-            description: ''
-        }
-        var section = {
-            crn: 0,
-            subject: 'CISC',
-            course_number: '',
-            section_number: '',
-            building: '',
-            room: '',
-            professors: 'TBD',
-            times: '',
-            capacity: 0,
-            registered: ''
-        }
-        //course.subject = $(element).find('div[class=columns,small-6,medium-4,large-4]').text();
-        courseNumber = $(element).find('span[class=courseOpen]').text().split('-');
-        if(courseNumber[0] == '')
-        {
-            courseNumber = $(element).find('span[class=courseWaitlist]').text().split('-');
-        }
-        if(courseNumber[0] == '')
-        {
-            courseNumber = $(element).find('span[class=courseClosed]').text().split('-');
-        }
-        course.course_number = courseNumber[0];
-        section.course_number = courseNumber[0];
-        section.section_number = courseNumber[1];
-
-        var courseInfo = $(element).find('div[class="columns hide"]').text();
-        section.crn = parseInt(courseInfo.substring(courseInfo.indexOf('CRN') + 4, courseInfo.indexOf('CRN') + 9));
-        course.credits = parseInt(courseInfo.charAt(courseInfo.indexOf('Cr') - 2));
-
-        var courseHighlight = $(element).find('p[class="courseInfoHighlight"]');
-        section.building = courseHighlight[2].children[0].data.trim();
-        section.building = section.building.substring(0, section.building.length - 4);
-        section.room = $(element).find('span[class="locationHover"]').text().trim();
-
-        course.name = $(element).find('div[class="columns small-6 medium-4 large-4"]').text().trim();
-
-        course.description = $(element).find('p[class="courseInfo"]').text().trim();
-
-        section.professors = $(element).find('a[class="icon-dark-purple-light-purple c2-icon-1-7"]').text().trim();
-        section.professors = (section.professors === '') ? 'TBD' : section.professors;
-
-        var schedule = $(element).find('table[class="courseCalendar"]').find('tr');
-        schedule.each((function(j, row){
-            if(j == 2)
-            {
-                $(row).find($('td')).each((k, cell) => {
-                    if($(cell).hasClass('time'))
-                    {
-                        if(section.times.length != 0)
-                        {
-                            section.times = section.times + ',';
-                        }
-                        var timeRange = $(cell).text();
-                        var amIndex = timeRange.indexOf('am');
-                        var pmIndex = timeRange.indexOf('pm');
-                        if(amIndex != -1)
-                        {
-                            timeRange = timeRange.slice(0, amIndex + 2) + '-' + timeRange.slice(amIndex + 2);
-                        }
-                        else
-                        {
-                            timeRange = timeRange.slice(0, pmIndex + 2) + '-' + timeRange.slice(pmIndex + 2);
-                        }
-                        section.times = section.times + days[k] + ' ' + timeRange;
-                    }
-                })    
+        //for each course
+        $('div[class=course]').each(function(i, element){
+            var course = {
+                subject: currentSubject,
+                course_number: '',
+                credits: 0,
+                name: '',
+                description: ''
             }
-        }));
-        //console.log(schedule);
+            var section = {
+                crn: 0,
+                subject: currentSubject,
+                course_number: '',
+                section_number: '',
+                building: '',
+                room: '',
+                professors: 'TBD',
+                times: '',
+                capacity: 0,
+                registered: ''
+            }
 
-        sections.push(section);
-        courses.push(course);
+            //grab course number from html
+            courseNumber = $(element).find('span[class=courseOpen]').text().split('-');
+            if(courseNumber[0] == '')
+            {
+                courseNumber = $(element).find('span[class=courseWaitlist]').text().split('-');
+            }
+            if(courseNumber[0] == '')
+            {
+                courseNumber = $(element).find('span[class=courseClosed]').text().split('-');
+            }
+            course.course_number = courseNumber[0];
+            section.course_number = courseNumber[0];
+            section.section_number = courseNumber[1];
+
+            //grab crn and credits from html
+            var courseInfo = $(element).find('div[class="columns hide"]').text();
+            section.crn = parseInt(courseInfo.substring(courseInfo.indexOf('CRN') + 4, courseInfo.indexOf('CRN') + 9));
+            course.credits = parseInt(courseInfo.charAt(courseInfo.indexOf('Cr') - 2));
+
+            //grab building and room number from html
+            var courseHighlight = $(element).find('p[class="courseInfoHighlight"]');
+            section.building = courseHighlight[2].children[0].data.trim();
+            section.building = section.building.substring(0, section.building.length - 4);
+            section.room = $(element).find('span[class="locationHover"]').text().trim();
+
+            course.name = $(element).find('div[class="columns small-6 medium-4 large-4"]').text().trim();
+
+            course.description = $(element).find('p[class="courseInfo"]').text().trim();
+
+            //grab professor, if no professor set to TBD
+            section.professors = $(element).find('a[class="icon-dark-purple-light-purple c2-icon-1-7"]').text().trim();
+            section.professors = (section.professors === '') ? 'TBD' : section.professors;
+
+            //parse table containing class days and times
+            var schedule = $(element).find('table[class="courseCalendar"]').find('tr');
+            schedule.each((function(j, row){
+                if(j >= 1)
+                {
+                    $(row).find($('td')).each((k, cell) => {
+                        if($(cell).hasClass('time'))
+                        {
+                            if(section.times.length != 0)
+                            {
+                                section.times = section.times + ',';
+                            }
+                            var timeRange = $(cell).text().trim();
+                            var amIndex = timeRange.indexOf('am');
+                            var pmIndex = timeRange.indexOf('pm');
+                            var slashIndex = timeRange.indexOf('/');
+                            
+                            //place hyphen between the times
+                            if(amIndex != -1)
+                            {
+                                //a few listings have specific dates where class is held, therefore must be sliced a bit differently
+                                if(slashIndex > -1)
+                                {
+                                    timeRange = timeRange.slice(slashIndex + 4, amIndex + 2) + '-' + timeRange.slice(amIndex + 2, timeRange.indexOf('/', slashIndex + 1) - 2);   
+                                }
+                                else
+                                {
+                                    timeRange = timeRange.slice(0, amIndex + 2) + '-' + timeRange.slice(amIndex + 2);
+                                }
+                            }
+                            else
+                            {
+                                if(slashIndex > -1)
+                                {
+                                    timeRange = timeRange.slice(slashIndex + 4, pmIndex + 2) + '-' + timeRange.slice(pmIndex + 2, timeRange.indexOf('/', slashIndex + 1) - 2);   
+                                }
+                                else
+                                {
+                                    timeRange = timeRange.slice(0, pmIndex + 2) + '-' + timeRange.slice(pmIndex + 2);
+                                }
+                            }
+
+                            section.times = section.times + days[k] + ' ' + timeRange;
+                        }
+                    });
+                }
+            }));
+            
+            section.capacity = parseInt($(element).find('div[class="columns small-2"]').text().trim().slice(5));
+
+            sections.push(section);
+            courses.push(course);
+        });
+
+        // for(var i = 0; i < courses.length; i++)
+        // {
+        //     console.log(courses[i]);
+        // }
+    })
+    .then(()=>{
+        //this is just for testing, should be removed upon completion
+        if(sections.length == 1984)
+        {
+            for(var i = 0; i < sections.length; i++)
+            {
+                console.log(sections[i].subject + ' ' + sections[i].course_number);
+            }
+        }
+    })
+    .catch(error => {
+        console.log(error);
     });
-    //var courses = body.find('div[class=course]')[0];
-    //var section = body.find('span[class=courseOpen]')[0];
+}
 
-    console.log(sections[0]);
-    // for(var i = 0; i < sections.length; i++)
-    // {
-    //     console.log(sections[i]);
-    // }
-})
-.catch(error => {
-    console.log(error);
-})
 
 //cheerio documentation
 //https://github.com/cheeriojs/cheerio
