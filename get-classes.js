@@ -34,6 +34,22 @@ database.serialize(() => {
 axios.get('https://classes.aws.stthomas.edu/json/getSubjectList.json?year=2019&term=20&schoolCode=ALL&levelCode=ALL')
 .then(result => {
     //insert results into departments table
+    result.forEach((item) => {
+        if(item.subjectCode == 'STEM')
+        {
+            database.serialize(() => {
+                database.run('INSERT INTO departments(subject, full_name) VALUES (?, ?)',
+                [result.subjectCode, result.subjectDescription]);
+            });  
+        }
+        else
+        {
+            database.serialize(() => {
+                database.run('INSERT INTO departments(subject, full_name) VALUES (?, ?)',
+                [result.subjectCode, result.subjectDescription.substring(6)]);
+            });  
+        }
+    })
 })
 .catch(error => {
     console.log(error);
@@ -182,7 +198,10 @@ axios.all(promises)
     {
         console.log(sections[i].subject + ' ' + sections[i].course_number);
     }
-})
+});
+
+database.close();
+
 //}
 
 
