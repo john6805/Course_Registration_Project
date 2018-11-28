@@ -34,22 +34,22 @@ database.serialize(() => {
 axios.get('https://classes.aws.stthomas.edu/json/getSubjectList.json?year=2019&term=20&schoolCode=ALL&levelCode=ALL')
 .then(result => {
     //insert results into departments table
-    result.forEach((item) => {
+    result.data.forEach((item) => {
         if(item.subjectCode == 'STEM')
         {
             database.serialize(() => {
-                database.run('INSERT INTO departments(subject, full_name) VALUES (?, ?)',
-                [result.subjectCode, result.subjectDescription]);
+                database.run('INSERT OR IGNORE INTO departments(subject, full_name) VALUES (?, ?)',
+                [item.subjectCode, item.subjectDescription]);
             });  
         }
         else
         {
             database.serialize(() => {
-                database.run('INSERT INTO departments(subject, full_name) VALUES (?, ?)',
-                [result.subjectCode, result.subjectDescription.substring(6)]);
+                database.run('INSERT OR IGNORE INTO departments(subject, full_name) VALUES (?, ?)',
+                [item.subjectCode, item.subjectDescription.substring(6)]);
             });  
         }
-    })
+    });
 })
 .catch(error => {
     console.log(error);
@@ -59,7 +59,6 @@ axios.get('https://classes.aws.stthomas.edu/json/getSubjectList.json?year=2019&t
 for(var iterator = 0; iterator < subjects.length; iterator++)
 {
     var currentSubject = subjects[iterator];
-    //currentSubject = 'CISC';
     promises.push(axios.get('https://classes.aws.stthomas.edu/index.htm?year=2019&term=20&schoolCode=ALL&levelCode=ALL&selectedSubjects=' + currentSubject));
 }
 axios.all(promises)
@@ -180,27 +179,28 @@ axios.all(promises)
             sections.push(section);
             courses.push(course);
         });
-
-        // for(var i = 0; i < sections.length; i++)
-        // {
-        //     console.log(sections[i]);
-        // }
     })
 })
 .then(()=>{
     //this block is where the insert into the table should occur
 
-    //Create database connection
     //Loop over 'sections' and 'courses'
     //only insert into courses if the current course isn't present
-    
-    for(var i = 0; i < sections.length; i++)
-    {
-        console.log(sections[i].subject + ' ' + sections[i].course_number);
-    }
-});
+    courses.forEach((course) => {
+        database.serialize(() => {
+            database.run('INSERT OR IGNORE INTO courses(subject, course_number, credits, name, description) VALUES (?, ?, ?, ?, ?)',
+            [course.subject, course.course_number, course.credits, course.name, course.description]);
+        });
+    });
+    sections.forEach((section) => {
+        database.serialize(() => {
+            database.run('INSERT OR IGNORE INTO sections(crn, subject, course_number, section_number, building, room, professors, times, capacity, registered) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [section.crn, section.subject, section.course_number, section.section_number, section.building, section.room, section.professors, section.times, section.capacity, section.registered]);
+        });
+    });
 
-database.close();
+    database.close();
+});
 
 //}
 
