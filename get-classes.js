@@ -113,10 +113,19 @@ axios.all(promises)
             course.credits = parseInt(courseInfo.charAt(courseInfo.indexOf('Cr') - 2));
 
             //grab building and room number from html
-            var courseHighlight = $(element).find('p[class="courseInfoHighlight"]');
-            section.building = courseHighlight[2].children[0].data.trim();
-            section.building = section.building.substring(0, section.building.length - 4);
             section.room = $(element).find('span[class="locationHover"]').text().trim();
+            var courseHighlight = $(element).find('p[class="courseInfoHighlight"]');
+            if(section.room == 'Online')
+            {
+                section.building = 'Online';
+                section.room = null;
+            }
+            else
+            {
+                section.building = courseHighlight[2].children[0].data.trim();
+                section.building = section.building.substring(0, section.building.length - 4);
+            }
+            
 
             course.name = $(element).find('div[class="columns small-6 medium-4 large-4"]').text().trim();
 
