@@ -6,6 +6,7 @@ var body;
 var $;
 var courses = [];
 var sections = [];
+var promises = [];
 var subjects = ['ACCT','ACSC','ACST','AERO','AMBA','ARAB','ARHS','ARTH','BCHM','BCOM','BETH','BIOL','BLAW','BUSN','CATH','CHDC','CHEM','CHIN','CIED','CISC','CJUS','CLAS','COAC','COJO','COMM','CPSY','CSIS','CSMA','CTED','DRSW','DSCI','DVDM','DVDT','DVHS','DVLS','DVMT','DVPH','DVPM','DVPT','DVSP','DVSS','DVST','ECMP','ECON','EDCE','EDLD','EDUA','EDUC','EGED','ENGL','ENGR','ENTR','ENVR','ESCI','ETLS','EXSC','FAST','FILM','FINC','FREN','GBEC','GENG','GEOG','GEOL','GERM','GIFT','GMUS','GRED','GREK','GRPE','GRSW','GSPA','HIST','HLTH','HONR','HRDO','IBUS','IDSC','IDSW','IDTH','INAC','INCH','INEC','INEG','INFC','INFR','INGR','INHR','INID','INIM','INJP','INLW','INMC','INMG','INMK','INOP','INPS','INRS','INSP','INST','INTR','IRGA','ITAL','JAPN','JOUR','JPST','LATN','LAWS','LEAD','LGST','LHDT','MATH','MBAC','MBEC','MBEN','MBEX','MBFC','MBFR','MBFS','MBGC','MBGM','MBHC','MBHR','MBIF','MBIM','MBIS','MBLW','MBMG','MBMK','MBNP','MBOP','MBQM','MBSK','MBSP','MBST','MBUN','MBVE','MFGS','MGMP','MGMT','MKTG','MMUS','MSQS','MSRA','MUSC','MUSN','MUSP','MUSR','MUSW','NSCI','ODOC','OPMT','PHED','PHIL','PHYS','PLLD','POLS','PSYC','PUBH','QMCS','READ','REAL','RECE','REDP','RUSS','SABC','SABD','SACS','SAED','SAIM','SAIN','SALS','SAMB','SASE','SASW','SEAM','SEIS','SMEE','SOCI','SOWK','SPAN','SPED','SPGT','SPUG','STAT','STEM','TEGR','THEO','THTR','WMST']
 var days = {
     0: 'M',
@@ -16,21 +17,29 @@ var days = {
     5: 'Sa',
     6: 'Su'
 }
+//Create database
+//Create Tables
+
+
 //this code will be used for inserting into the departments table, returns a json with all subjects and their abbreviations
-// axios.get('https://classes.aws.stthomas.edu/json/getSubjectList.json?year=2019&term=20&schoolCode=ALL&levelCode=ALL')
-// .then(result => {
-//     console.log(result.data);
-// })
-// .catch(error => {
-//     console.log(error);
-// });
+axios.get('https://classes.aws.stthomas.edu/json/getSubjectList.json?year=2019&term=20&schoolCode=ALL&levelCode=ALL')
+.then(result => {
+    //insert results into departments table
+})
+.catch(error => {
+    console.log(error);
+});
 
 //loop through each subject and get it's courses/sections
 for(var iterator = 0; iterator < subjects.length; iterator++)
 {
     var currentSubject = subjects[iterator];
-    axios.get('https://classes.aws.stthomas.edu/index.htm?year=2019&term=20&schoolCode=ALL&levelCode=ALL&selectedSubjects=' + currentSubject)
-    .then(result => {
+    //currentSubject = 'CISC';
+    promises.push(axios.get('https://classes.aws.stthomas.edu/index.htm?year=2019&term=20&schoolCode=ALL&levelCode=ALL&selectedSubjects=' + currentSubject));
+}
+axios.all(promises)
+.then(function(results){
+    results.forEach((result) =>{
         //strip the body out of the html
         bodyStart = result.data.search('<body>');
         bodyEnd = result.data.search('</body>');
@@ -41,7 +50,7 @@ for(var iterator = 0; iterator < subjects.length; iterator++)
         //for each course
         $('div[class=course]').each(function(i, element){
             var course = {
-                subject: currentSubject,
+                subject: result.request.path.slice(-4),
                 course_number: '',
                 credits: 0,
                 name: '',
@@ -49,7 +58,7 @@ for(var iterator = 0; iterator < subjects.length; iterator++)
             }
             var section = {
                 crn: 0,
-                subject: currentSubject,
+                subject: result.request.path.slice(-4),
                 course_number: '',
                 section_number: '',
                 building: '',
@@ -147,25 +156,25 @@ for(var iterator = 0; iterator < subjects.length; iterator++)
             courses.push(course);
         });
 
-        // for(var i = 0; i < courses.length; i++)
+        // for(var i = 0; i < sections.length; i++)
         // {
-        //     console.log(courses[i]);
+        //     console.log(sections[i]);
         // }
     })
-    .then(()=>{
-        //this is just for testing, should be removed upon completion
-        if(sections.length == 1984)
-        {
-            for(var i = 0; i < sections.length; i++)
-            {
-                console.log(sections[i].subject + ' ' + sections[i].course_number);
-            }
-        }
-    })
-    .catch(error => {
-        console.log(error);
-    });
-}
+})
+.then(()=>{
+    //this block is where the insert into the table should occur
+
+    //Create database connection
+    //Loop over 'sections' and 'courses'
+    //only insert into courses if the current course isn't present
+    
+    for(var i = 0; i < sections.length; i++)
+    {
+        console.log(sections[i].subject + ' ' + sections[i].course_number);
+    }
+})
+//}
 
 
 //cheerio documentation
