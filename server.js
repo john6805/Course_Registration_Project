@@ -8,7 +8,7 @@ var url = require('url');
 var mime = require('mime-types');
 
 var port = 8012;
-var public_dir = path.join(__dirname, 'course_registration/public');
+var public_dir = path.join(__dirname, 'client/html');
 //var public_dir = path.join(__dirname, 'public');
 
 var server = http.createServer((request, response) => {
