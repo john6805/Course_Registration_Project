@@ -1,1 +1,9 @@
-console.log('js came too');
+app = new Vue({
+    el: "#app",
+    data: {
+
+    },
+    methods: {
+        
+    }
+});
