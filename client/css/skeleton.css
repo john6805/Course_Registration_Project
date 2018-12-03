@@ -387,3 +387,11 @@ there.
 
 /* Larger than Desktop HD */
 @media (min-width: 1200px) {}
+
+/* CUSTOM CSS FOR PICTURE SIZING */
+
+#johnpic {
+  width: 100em;
+  height: 100%;
+  float: left;
+}
