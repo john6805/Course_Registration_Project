@@ -391,7 +391,6 @@ there.
 /* CUSTOM CSS FOR PICTURE SIZING */
 
 #johnpic {
-  width: 100em;
-  height: 100%;
-  float: left;
+  display: inline-block;
+  width: 100px;
 }
