@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <p> Create Registration Page Here</p>
-    <ul>
+    <ul id='department-list'>
       <li v-for='department in departments' :key='department.subject'>{{department.subject}} {{department.full_name}}</li>
     </ul>
   </div>
@@ -34,4 +34,11 @@ export default {
   }
 }
 </script>
+
+<style>
+  #department-list {
+    background-color: aqua;
+  }
+</style>
+
 
