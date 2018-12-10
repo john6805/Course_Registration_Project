@@ -14,7 +14,7 @@
     <h1 style="clear: left;">Ryan Jasperson</h1>
     <p>
       <img id=ryanpic src="../assets/familyphoto.jpg" style="width:15%; height:100%;float:left;">
-      Ryan Text goes here.
+      I am a senior here at UST majoring in Computer Science with a minor in Applied Statistics. Last summer I interned for Northrop Grumman as a network engineering intern. I'm not sure what I'd like to do for a career yet but I'm open to just about anything in the field. I'm the founder and president of the St. Thomas eSports club and compete at a collegiate level against other schools across Minnesota. Other hobbies I enjoy are biking, collecting vinyl, and building electronics.
     </p>
     <h1 style="clear: left;">Tools used</h1>
     <p>
@@ -23,6 +23,7 @@
         <li>Vue js framework</li>
         <li>SQLite3 Database</li>
         <li>Express</li>
+        <li>Skeleton framework</li>
       </ul>
     </p>
   </div>

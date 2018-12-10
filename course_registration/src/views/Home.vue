@@ -27,6 +27,8 @@
             <th> Professor </th>
             <th> Credits </th>
             <th> CRN </th>
+            <th> Registered </th>
+            <th> Waitlisted </th>
           </tr>
         </div>
       </thead>
@@ -41,6 +43,8 @@
             <td> {{course.professors}} </td>
             <td> {{course.credits}} </td>
             <td> {{course.crn}} <td>
+            <td> {{course.numberOfRegistered}} <td>
+            <td> {{course.numberOfWaitlisted}} <td>
           </tr>
           <tr v-show="course.expand">
             <td colspan="2">{{course.times}}</td>
@@ -97,6 +101,27 @@ export default {
         self.courses = response.data;
         self.courses.forEach((course => {
           self.$set(course, 'expand', false);
+          var numWaitlisted = 0;
+          //calculate registered and waitlisted
+          if(course.registered != null){
+            var numRegistered = course.registered;
+            var registered = 0;
+            numRegistered = numRegistered.split(",");
+            for(var i=0; i<numRegistered.length; i++){
+              if(numRegistered[i].charAt(0) != "W"){
+                registered = registered + 1;
+              }else{
+                numWaitlisted = numWaitlisted + 1;
+              }
+            }
+          }else{
+            var numRegistered = course.registered;
+            var registered = 0;
+            numWaitlisted = 0;
+          }
+          console.log(numWaitlisted);
+          self.$set(course, 'numberOfWaitlisted', numWaitlisted);
+          self.$set(course, 'numberOfRegistered', registered);
         }));
       });
     },
