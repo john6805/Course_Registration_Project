@@ -5,9 +5,13 @@
     <ul id='department-list'>
       <li v-for='department in departments' :key='department.subject'>{{department.subject}} {{department.full_name}}</li>
     </ul>
-    <!-- input text for course number -->
-    <!-- input text for crn -->
-    <!-- search button -->
+    <span>Course number: </span>
+    <input type="text" v-model="course_number" placeholder="101">
+    <br>
+    <span>CRN: </span>
+    <input type="text" v-model="crn" placeholder="12345">
+    <br>
+    <button v-on:click="getCourses">Search</button>
     <table>
       <thead>
         <tr>
