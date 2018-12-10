@@ -23,18 +23,43 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for='course in courses' :key='course.crn'>
-          <td> {{course.subject}} {{course.course_number}} - {{course.section_number}}</td>
-          <td> {{course.name}} </td>
-          <td v-if="course.building.indexOf('No') < 0"> {{course.building}} </td>
-          <td v-else>{{course.building.slice(0, course.building.indexOf('No'))}}</td>
-          <td> {{course.room}} </td>
-          <td> {{course.professors}} </td>
-          <td> {{course.credits}} </td>
-          <td> {{course.crn}} <td>
-        </tr>
+        <div v-for='course in courses' :key='course.crn'>
+          <tr @click="toggleShow(course)">
+            <td> {{course.subject}} {{course.course_number}} - {{course.section_number}}</td>
+            <td> {{course.name}} </td>
+            <td v-if="course.building.indexOf('No') < 0"> {{course.building}} </td>
+            <td v-else>{{course.building.slice(0, course.building.indexOf('No'))}}</td>
+            <td> {{course.room}} </td>
+            <td> {{course.professors}} </td>
+            <td> {{course.credits}} </td>
+            <td> {{course.crn}} <td>
+          </tr>
+          <tr v-show="course.expand">
+            <td colspan="2">{{course.times}}</td>
+            <td colspan="4">{{course.description}} </td>
+            <td><button @click="register">Register</button></td>
+          </tr>
+        </div>
       </tbody>
     </table>
+    <div id="table-container">
+      <article class='accordion' v-for='course in courses' :key='course.crn'>
+        <div class="accordion-header" @click="toggleShow(course)">
+          {{course.crn}} {{course.subject}} {{course.course_number}} - {{course.section_number}}
+          {{course.name}} {{course.building}} {{course.room}} {{course.professors}}
+          {{course.credits}} {{course.registered}}
+        </div>
+        <div class="accordion-body" v-show="course.expand">
+          <div class="body-content">
+            {{course.times}} {{course.crn}}
+            <p>
+              {{course.description}}
+            </p>
+            <button @click="register">Register</button>
+          </div>
+        </div>
+      </article>
+    </div>
   </div>
 </template>
 
@@ -80,13 +105,33 @@ export default {
         }
       }).then((response) => {
         self.courses = response.data;
+        self.courses.forEach((course => {
+          self.$set(course, 'expand', false);
+          console.log(course.expand);
+        }));
+      });
+    },
+    toggleShow(course)
+    {
+      course.expand = !course.expand;
+      console.log(course.expand);
+    },
+    register() {
+      axios({
+        method: 'post',
+        url: 'http://localhost:8012/register',
+        data: {
+          subjects: self.university_id,
+          crn: self.crn
+        }
+      }).then((response) => {
+        window.alert(response.data.waitlisted);
       });
     }
   },
   beforeMount(){
     this.getDepartments();
   }
-  
 }
 </script>
 
@@ -110,6 +155,27 @@ export default {
   .home {
     position: relative;
   }
+
+  .accordion {
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.accordion-header {
+    cursor: pointer;
+}
+
+.accordion-body   {
+    padding: 0;
+    max-height: 15em;
+    overflow:scroll;
+    transition: 0.3s ease all;
+}
+
+.body-content {
+    padding: 20px;
+}
 </style>
 
 
