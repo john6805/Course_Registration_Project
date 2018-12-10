@@ -26,12 +26,18 @@
     <p>
       Some tools we used:
       <ul>
-        <li>Vue js framework</li>
+        <li>VueJS</li>
         <li>SQLite3 Database</li>
         <li>Express</li>
-        <li>Skeleton framework</li>
+        <li>Babel</li>
+        <li>WebPack</li>
+        <li>Skeleton</li>
+        <li>Cheerio</li>
+        <li>Axios</li>
       </ul>
     </p>
+    <h5>Demo video</h5>
+    <a href="https://youtu.be/LEDQjoX8T1Q">CLICK FOR VIDEO DEMO</a>
   </div>
 </template>
 
