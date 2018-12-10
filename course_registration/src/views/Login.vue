@@ -48,6 +48,7 @@
                         {
                             //authentiated
                             self.$emit("authenticated", true);
+                            self.$emit("university_id", self.input.university_id);
                             self.$router.replace({ 
                                 name: "home", 
                                 params: {

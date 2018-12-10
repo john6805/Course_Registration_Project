@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <p> Create Registration Page Here</p>
-    <p>{{university_id}} </p>
+    <p>{{ university_id }} </p>
     <ul id='department-list'>
       <li v-for='department in departments' :key='department.subject'>{{department.subject}} {{department.full_name}}</li>
     </ul>
@@ -39,7 +39,7 @@ export default {
       courses: []
     }
   },
-  props: ['authenticated', 'university_id'],
+  props: ['university_id', 'authenticated'],
   methods: {
     getDepartments: function() {
       let self = this;
