@@ -59,7 +59,8 @@ app.post('/courses', (request, response) => {
 					sections.registered, 
 					courses.credits, 
 					courses.name, 
-					courses.description 
+					courses.description,
+					sections.crn
 				FROM 
 					sections 
 				INNER JOIN 
@@ -82,7 +83,8 @@ app.post('/courses', (request, response) => {
 					sections.registered, 
 					courses.credits, 
 					courses.name, 
-					courses.description 
+					courses.description,
+					sections.crn 
 				FROM 
 					sections 
 				INNER JOIN 
@@ -106,7 +108,8 @@ app.post('/courses', (request, response) => {
 					sections.registered, 
 					courses.credits, 
 					courses.name, 
-					courses.description 
+					courses.description,
+					sections.crn 
 				FROM 
 					sections 
 				INNER JOIN 

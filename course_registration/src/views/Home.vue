@@ -16,7 +16,9 @@
       </thead>
       <tbody>
         <tr v-for='course in courses' :key='course.crn'>
-          <td> {{course.subject}} {{course.course_number}}</td>
+          <td> {{course.subject}} {{course.course_number}} - {{course.section_number}}</td>
+          <td> {{course.name}} </td>
+          <td> {{course.building}} {{course.room}} </td>
         </tr>
       </tbody>
     </table>
