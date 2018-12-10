@@ -45,7 +45,7 @@ app.post('/courses', (request, response) => {
 	crn = request.body.crn;
 
 	let sql;
-	if(crn != null)
+	if(crn != '')
 	{
 		sql = 	`SELECT 
 					sections.subject, 
@@ -67,9 +67,16 @@ app.post('/courses', (request, response) => {
 					courses 
 				ON 
 					sections.subject = courses.subject AND sections.course_number = courses.course_number 
-				WHERE sections.crn = \'` + crn + `\'\;`;
+				WHERE sections.crn = ?`;
+				database.all(sql, [crn], (err, rows) => {
+					if(err){
+						return console.log(err.message);
+					}
+			
+					response.send(rows);
+				});
 	}
-	else if(course_number != null)
+	else if(course_number != '')
 	{
 		sql = 	`SELECT 
 					sections.subject, 
@@ -93,6 +100,13 @@ app.post('/courses', (request, response) => {
 					sections.subject = courses.subject AND sections.course_number = courses.course_number
 				WHERE sections.subject in (` + subjects.map(() => { return '?' }).join(',') + ` )
 				AND sections.course_number = \'` + course_number + `\'\;`;
+				database.all(sql, subjects, (err, rows) => {
+					if(err){
+						return console.log(err.message);
+					}
+			
+					response.send(rows);
+				});
 	}
 	else
 	{
@@ -117,15 +131,14 @@ app.post('/courses', (request, response) => {
 				ON 
 					sections.subject = courses.subject AND sections.course_number = courses.course_number
 				WHERE sections.subject in (` + subjects.map(() => { return '?' }).join(',') + ` )`;
+				database.all(sql, subjects, (err, rows) => {
+					if(err){
+						return console.log(err.message);
+					}
+			
+					response.send(rows);
+				});
 	}
-
-	database.all(sql, subjects, (err, rows) => {
-		if(err){
-			return console.log(err.message);
-		}
-
-		response.send(rows);
-	});
 });
 
 // app.get('/courses', (request, response) => {
