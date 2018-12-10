@@ -1,7 +1,6 @@
 <template>
   <div class="home">
     <p> Create Registration Page Here</p>
-    <p>{{ university_id }} </p>
     <div id="list-container">
       <ul id='department-list'>
         <li v-for='department in departments' :key='department.subject'>
@@ -49,7 +48,7 @@
           <tr v-show="course.expand">
             <td colspan="2">{{course.times}}</td>
             <td colspan="3">{{course.description}} </td>
-            <td><button @click="register">Register</button></td>
+            <td><button @click="register(course.crn)">Register</button></td>
           </tr>
         </div>
       </tbody>
@@ -64,16 +63,17 @@ import axios from 'axios';
 
 export default {
   name: 'home',
+  props: ['user_info', 'authenticated'],
   data: () => {
     return {
       departments: [],
       subjects: ['CISC'],
       course_number: '',
       crn: '',
-      courses: []
+      courses: [],
+      user: {}
     }
   },
-  props: ['university_id', 'authenticated'],
   methods: {
     getDepartments: function() {
       let self = this;
@@ -129,16 +129,20 @@ export default {
     {
       course.expand = !course.expand;
     },
-    register() {
+    register(crn) {
+      let self = this;
       axios({
         method: 'post',
         url: 'http://localhost:8012/register',
         data: {
-          subjects: self.university_id,
-          crn: self.crn
+          university_id: self.user.university_id,
+          crn: crn
         }
       }).then((response) => {
-        window.alert(response.data.waitlisted);
+        if(response.data.err)
+        {
+          window.alert(response.data.err);
+        }
       });
     }
   },
@@ -146,7 +150,7 @@ export default {
     this.getDepartments();
   },
   mounted(){
-    console.log(this.university_id);
+    this.user = this.user_info;
   }
 }
 </script>
