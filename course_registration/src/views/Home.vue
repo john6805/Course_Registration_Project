@@ -4,6 +4,18 @@
     <ul id='department-list'>
       <li v-for='department in departments' :key='department.subject'>{{department.subject}} {{department.full_name}}</li>
     </ul>
+    <table>
+      <thead>
+        <tr>
+          <td> Subject </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for='course in courses' :key='course.crn'>
+          <td> {{course.subject}} {{course.course_number}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -16,7 +28,11 @@ export default {
   name: 'home',
   data: () => {
     return {
-      departments: []
+      departments: [],
+      subjects: ['CISC'],
+      course_number: null,
+      crn: null,
+      courses: []
     }
   },
   methods: {
@@ -27,10 +43,26 @@ export default {
           self.departments = response.data;
           window.alert(response.data);
         });
+    },
+    getCourses: function() {
+      let self = this;
+      axios({
+        method: 'post',
+        url: 'http://localhost:8012/courses',
+        data: {
+          subjects: self.subjects,
+          course_number: self.course_number,
+          crn: self.crn
+        }
+      }).then((response) => {
+        self.courses = response.data;
+        window.alert(response.data);
+      });
     }
   },
   beforeMount(){
     this.getDepartments();
+    this.getCourses();
   }
 }
 </script>
