@@ -172,16 +172,15 @@ app.post('/register', (request, response) => {
 });
 
 app.post('/check_user', (request, response) => {
-	university_id = request.body.university_id;
-	password = request.body.password;
+	let university_id = request.body.university_id;
+	let password = request.body.password;
 
 	let sql = `SELECT * FROM people WHERE university_id = ?` ;
 	database.get(sql, [university_id], (err, row) => {
 		if(err){
 			return console.log(err.message);
 		}
-
-		if(row.password === password)
+		if(row !== undefined && row.password === password)
 		{
 			response.json({
 				auth: true,
@@ -198,11 +197,11 @@ app.post('/check_user', (request, response) => {
 });
 
 app.post('/create_user', (request, response) => {
-	university_id = request.body.university_id;
-	password = request.body.password;
-	position = request.body.position;
-	first_name = request.body.first_name;
-	last_name = request.body.last_name;
+	let university_id = request.body.university_id;
+	let password = request.body.password;
+	let position = request.body.position;
+	let first_name = request.body.first_name;
+	let last_name = request.body.last_name;
 
 	let sql = `INSERT INTO people(university_id, password, position, first_name, last_name) VALUES(?, ?, ?, ?, ?)`;
 	database.run(sql, [university_id, password, position, first_name, last_name], (err, row) => {
