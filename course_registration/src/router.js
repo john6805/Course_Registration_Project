@@ -20,9 +20,10 @@ export default new Router({
       component: Login
     },
     {
-      path: '/home',
+      path: '/home/:authenticated/:university_id',
       name: 'home',
-      component: Home
+      component: Home,
+      props: true
     },
     {
       path: '/about',

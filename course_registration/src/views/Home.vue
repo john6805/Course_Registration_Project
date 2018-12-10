@@ -1,9 +1,13 @@
 <template>
   <div class="home">
     <p> Create Registration Page Here</p>
+    <p>{{university_id}} </p>
     <ul id='department-list'>
       <li v-for='department in departments' :key='department.subject'>{{department.subject}} {{department.full_name}}</li>
     </ul>
+    <!-- input text for course number -->
+    <!-- input text for crn -->
+    <!-- search button -->
     <table>
       <thead>
         <tr>
@@ -35,6 +39,7 @@ export default {
       courses: []
     }
   },
+  props: ['authenticated', 'university_id'],
   methods: {
     getDepartments: function() {
       let self = this;
@@ -62,6 +67,7 @@ export default {
     this.getDepartments();
     this.getCourses();
   }
+  
 }
 </script>
 

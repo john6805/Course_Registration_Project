@@ -1,3 +1,14 @@
+<template>
+    <div id="login">
+        <h1>Login</h1>
+        <input type="text" name="university_id" v-model="input.university_id" placeholder="University_id" />
+        <input type="password" name="password" v-model="input.password" placeholder="Password" />
+        <button type="button" v-on:click="login()">Login</button>
+        <button type="button" v-on:click="createNewUser()">Create New User</button>
+        <modal v-show="createUser" @close="closeModal()" />
+    </div>
+</template>
+
 <script>
 //Found at https://www.thepolyglotdeveloper.com/2018/04/simple-user-login-vuejs-web-application/
     import axios from 'axios';
@@ -37,7 +48,12 @@
                         {
                             //authentiated
                             self.$emit("authenticated", true);
-                            self.$router.replace({ name: "home" });
+                            self.$router.replace({ 
+                                name: "home", 
+                                params: {
+                                    university_id: self.university_id
+                                }
+                            });
                         }
                         else
                         {
@@ -56,14 +72,3 @@
         }
     }
 </script>
-
-<template>
-    <div id="login">
-        <h1>Login</h1>
-        <input type="text" name="university_id" v-model="input.university_id" placeholder="University_id" />
-        <input type="password" name="password" v-model="input.password" placeholder="Password" />
-        <button type="button" v-on:click="login()">Login</button>
-        <button type="button" v-on:click="createNewUser()">Create New User</button>
-        <modal v-show="createUser" @close="closeModal()" />
-    </div>
-</template>

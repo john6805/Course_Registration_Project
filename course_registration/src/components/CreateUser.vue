@@ -86,11 +86,21 @@
                     position: self.input.position.trim(),
                     first_name: self.input.first_name.trim(),
                     last_name: self.input.last_name.trim()
-                }).then(() => {
-                        //authentiated
-                    self.$emit("university_id", self.input.university_id);
-                    self.$emit("password", self.input.password);
-                    self.close();
+                }).then((response) => {
+                    if(response.data.status == 'success')
+                    {
+                        self.input.university_id = '';
+                        self.input.password = '';
+                        self.input.position = '';
+                        self.input.first_name = '';
+                        self.input.last_name = '';
+                        self.input.confirm_password = '';
+                        self.close();
+                    }
+                    else if(response.data.status == 'failure')
+                    {
+                        window.alert('Account has already been created')
+                    }
                 });
             }
         },

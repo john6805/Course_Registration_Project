@@ -206,11 +206,17 @@ app.post('/create_user', (request, response) => {
 	let sql = `INSERT INTO people(university_id, password, position, first_name, last_name) VALUES(?, ?, ?, ?, ?)`;
 	database.run(sql, [university_id, password, position, first_name, last_name], (err, row) => {
 		if(err){
-			return console.log(err.message);
+			console.log(err.message);
+			response.send({
+				status: 'failure'
+			});
 		}
-		response.send({
-			status: 'success'
-		});
+		else
+		{
+			response.send({
+				status: 'success'
+			});
+		}
 	});
 });
 app.listen(port);
