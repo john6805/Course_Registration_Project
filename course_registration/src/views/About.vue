@@ -9,7 +9,13 @@
     <h1 style="clear: left;">Jacob Johnson</h1>
     <p>
       <img id=gtpic src="../assets/GT_rosterpic.jpg" style="float:left;">
-      GT Text goes here.
+      My name is Jacob Johnson. I am a senior computer science major at UST.
+      I am a captain on the Men's Basketball team at St. Thomas. I really enjoy music,
+      especially live music. I love going to concerts or seeing local bands. I am a huge
+      Minnesota sports fan. Like all Minnesota sports fans, I hate waking up every Sunday
+      and being dissapointed in the Vikings. Every day is torment having to deal with these
+      extremely mediocre franchises who constantly let everyone down. Maybe one day we will
+      see a championship parade down first avenue. But probably not.
     </p>
     <h1 style="clear: left;">Ryan Jasperson</h1>
     <p>
