@@ -20,7 +20,7 @@ export default new Router({
       component: Login
     },
     {
-      path: '/home/:authenticated/:university_id',
+      path: '/home',
       name: 'home',
       component: Home,
       props: true
