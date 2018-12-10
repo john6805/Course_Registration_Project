@@ -5,7 +5,7 @@
       <router-link v-if="authenticated" to="/about">About</router-link> |
       <router-link v-if="authenticated" to="/login" v-on:click.native="logout()" replace>Logout</router-link>
     </div>
-    <router-view @authenticated="setAuthenticated" @university_id="setUniversityId" :authenticated="authenticated" :university_id="university_id" />
+    <router-view @authenticated="setAuthenticated" @user_info="setUserInfo" :authenticated="authenticated" :user_info="user_info" />
   </div>
 </template>
 
@@ -15,7 +15,7 @@
         data() {
             return {
                 authenticated: false,
-                university_id: ''
+                user_info: {}
             }
         },
         mounted() {
@@ -27,9 +27,9 @@
             setAuthenticated(status) {
                 this.authenticated = status;
             },
-            setUniversityId(id)
+            setUserInfo(info)
             {
-              this.university_id = id;
+              this.user_info = info;
             },
             logout() {
                 this.authenticated = false;

@@ -155,18 +155,27 @@ app.post('/register', (request, response) => {
 	let university_id = request.body.university_id;
 	let crn = request.body.crn;
 	let registered;
+	let input = university_id;
 	let waitlisted = false;
 	database.get(`SELECT capacity, registered FROM sections WHERE crn = ?`, [crn], (err, row) => {
 		if(err)
 		{
 			return console.log(err.message);
 		}
+		if(row.registered.indexOf(university_id) < 0)
+		{
+			response.send({
+				err: "Student already registered"
+			});
+			return;
+		}
 		if(row.registered.split(',').length >= row.capacity)
 		{
 			registered = row.registered + ',W' + university_id;
+			input = 'W' + university_id;
 			waitlisted = true;
 		}
-		else if(row.registered.split(',').length == 0)
+		else if(row.registered.length == 0)
 		{
 			registered = university_id;
 		}
@@ -174,7 +183,21 @@ app.post('/register', (request, response) => {
 		{
 			registered = row.registered + ',' + university_id;
 		}
-
+		database.run(`SELECT registered_courses FROM people WHERE university_id = ?`, [university_id], (err, row) => {
+			if(err)
+			{
+				console.log(err.message);
+			}
+			if(row.registered_courses.length != 0)
+			{
+				input = row.registered_courses + ',' + input;
+			}
+			database.run(`UPDATE people SET registered_courses = ? WHERE university_id = ?`, [input, university_id], (err, row)=>{
+				if(err){
+					return console.log(err.message);
+				}
+			});
+		});
 		database.run(`UPDATE sections SET registered = ? WHERE crn = ?`, [registered, crn], (err, row)=>{
 			if(err){
 				return console.log(err.message);
