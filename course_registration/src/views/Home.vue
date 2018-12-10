@@ -41,7 +41,6 @@ export default {
       axios.get('http://localhost:8012/departments')
         .then((response) => {
           self.departments = response.data;
-          window.alert(response.data);
         });
     },
     getCourses: function() {
@@ -56,7 +55,6 @@ export default {
         }
       }).then((response) => {
         self.courses = response.data;
-        window.alert(response.data);
       });
     }
   },

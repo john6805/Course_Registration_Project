@@ -164,7 +164,7 @@ app.post('/register', (request, response) => {
 				return console.log(err.message);
 			}
 			console.log(`crn: ` + crn + `\nregistered list: ` + registered);
-			response.json({
+			response.send({
 				waitlisted: waitlisted
 			});
 		});
@@ -182,14 +182,14 @@ app.post('/check_user', (request, response) => {
 		}
 		if(row !== undefined && row.password === password)
 		{
-			response.json({
+			response.send({
 				auth: true,
 				user_info: row
 			});
 		}
 		else 
 		{
-			response.json({
+			response.send({
 				auth:false
 			});
 		}
@@ -208,6 +208,9 @@ app.post('/create_user', (request, response) => {
 		if(err){
 			return console.log(err.message);
 		}
+		response.send({
+			status: 'success'
+		});
 	});
 });
 app.listen(port);
