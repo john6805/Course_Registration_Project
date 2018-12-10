@@ -18,13 +18,21 @@
     <button v-on:click="getCourses">Search</button>
     <table>
       <thead>
-        <tr>
-          <td> Subject </td>
-        </tr>
+        <div style="width: 100%;">
+          <tr style="width: 100%;">
+            <th> Subject </th>
+            <th> Name </th>
+            <th> Building </th>
+            <th> Room </th>
+            <th> Professor </th>
+            <th> Credits </th>
+            <th> CRN </th>
+          </tr>
+        </div>
       </thead>
       <tbody>
         <div v-for='course in courses' :key='course.crn'>
-          <tr @click="toggleShow(course)">
+          <tr class="accordion-header" @click="toggleShow(course)">
             <td> {{course.subject}} {{course.course_number}} - {{course.section_number}}</td>
             <td> {{course.name}} </td>
             <td v-if="course.building.indexOf('No') < 0"> {{course.building}} </td>
@@ -36,30 +44,12 @@
           </tr>
           <tr v-show="course.expand">
             <td colspan="2">{{course.times}}</td>
-            <td colspan="4">{{course.description}} </td>
+            <td colspan="3">{{course.description}} </td>
             <td><button @click="register">Register</button></td>
           </tr>
         </div>
       </tbody>
     </table>
-    <div id="table-container">
-      <article class='accordion' v-for='course in courses' :key='course.crn'>
-        <div class="accordion-header" @click="toggleShow(course)">
-          {{course.crn}} {{course.subject}} {{course.course_number}} - {{course.section_number}}
-          {{course.name}} {{course.building}} {{course.room}} {{course.professors}}
-          {{course.credits}} {{course.registered}}
-        </div>
-        <div class="accordion-body" v-show="course.expand">
-          <div class="body-content">
-            {{course.times}} {{course.crn}}
-            <p>
-              {{course.description}}
-            </p>
-            <button @click="register">Register</button>
-          </div>
-        </div>
-      </article>
-    </div>
   </div>
 </template>
 
@@ -107,14 +97,12 @@ export default {
         self.courses = response.data;
         self.courses.forEach((course => {
           self.$set(course, 'expand', false);
-          console.log(course.expand);
         }));
       });
     },
     toggleShow(course)
     {
       course.expand = !course.expand;
-      console.log(course.expand);
     },
     register() {
       axios({
@@ -131,6 +119,9 @@ export default {
   },
   beforeMount(){
     this.getDepartments();
+  },
+  mounted(){
+    console.log(this.university_id);
   }
 }
 </script>
@@ -151,6 +142,9 @@ export default {
     position: relative;
     top: -1px;
     *overflow: hidden;
+  }
+  th {
+    width:15%
   }
   .home {
     position: relative;
