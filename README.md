@@ -16,60 +16,60 @@ next: open chrome and navigate to http://localhost:8012 to view the application.
     THERE ARE TWO FOLDERS FOR NODE_MODULES. I DO NOT KNOW FOR SURE IF BOTH ARE NECESSARY, SO PRIOR TO RUNNING ANYTHING I WOULD RECOMMEND DOING A NPM INSTALL IN BOTH THE 'course_registration' DIRECTORY AND THE 'Course_Registration_Project' DIRECTORIES. WE SHOULD PROBABLY CHANGE THE DIRECTORY NAME FOR THE FRONT END FILES TO SOMETHING MORE CLEAR BUT I JUST GOT A SIMPLE REQUEST RESPONSE WORKING THROUGH THE FULL STACK.
 
 **THINGS TO DO**
-[x]Create a home page that serves as a login page
-[x]Use university_id as the username
-[x]Passwords should be hashed in the client before uploading to the server
-[x]Position should have a dropdown to select Student / Faculty
-[x]Have 2 buttons - "create new user" and "log in"
-[x]Create a search page - accessed once users log in
-[x]Checkbox list of department subject (4 letter code) and department full_name - similar to class finder
-[x]Require at least one checked
-[x]Text box for course_number
-[x]Text box for section crn
-[]Course Section Table (need to format)
-[x]Course subject (4 letter department code)
-[x]Course number
-[x]Course section
-[x]Course name
-[x]Building and room
-[x]Section professors
-[x]Course credits
-[x]Section crn
-[x]Section number registered / capacity
-[x]Section waitlist count
-[]Table should be ordered (subject in alphabetical order, for each subject - course number in ascending order, for each course number - section in ascending order
-[x]If the user clicks on any row, that section should expand to show the following (similar to class finder)
-[]Table of section class days/times (need table)
-[x]Course description
-[x]Register button (Only if user has position Student)
-[x]Send POST request (again using XMLHttpRequest) to register / add to the waitlist
-[]Update registered/waitlist count in table when student registers
-[x]Should result in error if student already registered for that class
-[x]View Roster button (Only if user has position Faculty)
-[x]Show list of registered / waitlisted students (university_id, first name, last name)
-[x]Clicking the row again should re-collapse that section
+[x]Create a home page that serves as a login page<br />
+[x]Use university_id as the username<br />
+[x]Passwords should be hashed in the client before uploading to the server<br />
+[x]Position should have a dropdown to select Student / Faculty<br />
+[x]Have 2 buttons - "create new user" and "log in"<br />
+[x]Create a search page - accessed once users log in<br />
+[x]Checkbox list of department subject (4 letter code) and department full_name - similar to class finder<br />
+[x]Require at least one checked<br />
+[x]Text box for course_number<br />
+[x]Text box for section crn<br />
+[]Course Section Table (need to format)<br />
+[x]Course subject (4 letter department code)<br />
+[x]Course number<br />
+[x]Course section<br />
+[x]Course name<br />
+[x]Building and room<br />
+[x]Section professors<br />
+[x]Course credits<br />
+[x]Section crn<br />
+[x]Section number registered / capacity<br />
+[x]Section waitlist count<br />
+[]Table should be ordered (subject in alphabetical order, for each subject - course number in ascending order, for each course number - section in ascending order<br />
+[x]If the user clicks on any row, that section should expand to show the following (similar to class finder)<br />
+[]Table of section class days/times (need table)<br />
+[x]Course description<br />
+[x]Register button (Only if user has position Student)<br />
+[x]Send POST request (again using XMLHttpRequest) to register / add to the waitlist<br />
+[]Update registered/waitlist count in table when student registers<br />
+[x]Should result in error if student already registered for that class<br />
+[x]View Roster button (Only if user has position Faculty)<br />
+[x]Show list of registered / waitlisted students (university_id, first name, last name)<br />
+[x]Clicking the row again should re-collapse that section<br />
+<br />
+"About the Project" page<br />
+[x]Short bio about each team member (including a photo)<br />
+[x]Description of the tools (frameworks, APIs, etc.) you used to create the application<br />
+[]Video demo of the application (2 - 4 minutes)<br />
+<br />
+5 additional points for each item completed on the list below<br />
 
-"About the Project" page
-[x]Short bio about each team member (including a photo)
-[x]Description of the tools (frameworks, APIs, etc.) you used to create the application
-[]Video demo of the application (2 - 4 minutes)
-
-5 additional points for each item completed on the list below
-
-[]Provide loading animation while results are being fetched from the server
-[]Color code rows in course listings
-
-Example: 
-Background light gray if not registered
-Background yellow if waitlisted
-Background green if registered
-
-[]Replace "register" button with "drop" button for Students in sections they are currently registered (or waitlisted for) Should update the database accordingly
-[]Automatically move the first person on a waitlist to registered if a registered student drops
-[]Prevent students from "double registering" - registering for two separate classes that have a time conflict
-[]Allow students to view schedule - Table with dates/times of all courses currently registered for - Can drop from this view too
-[]Create a pre-registration system for students
-Allow students to "pre-register" for a course (i.e. save it to a wishlist)
+[]Provide loading animation while results are being fetched from the server<br />
+[]Color code rows in course listings<br />
+<br />
+Example: <br />
+Background light gray if not registered<br />
+Background yellow if waitlisted<br />
+Background green if registered<br />
+<br />
+[]Replace "register" button with "drop" button for Students in sections they are currently registered (or waitlisted for) Should update the database accordingly<br />
+[]Automatically move the first person on a waitlist to registered if a registered student drops<br />
+[]Prevent students from "double registering" - registering for two separate classes that have a time conflict<br />
+[]Allow students to view schedule - Table with dates/times of all courses currently registered for - Can drop from this view too<br />
+[]Create a pre-registration system for students<br />
+<br />Allow students to "pre-register" for a course (i.e. save it to a wishlist)
 Students can view their wishlist and click to "register for all"
 Successfully register if openings available
 Put on waitlist if section is full
