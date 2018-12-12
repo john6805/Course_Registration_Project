@@ -52,6 +52,7 @@ axios.get('https://classes.aws.stthomas.edu/json/getSubjectList.json?year=2019&t
     });
 })
 .catch(error => {
+    console.log("error1\n");
     console.log(error);
 });
 
@@ -209,6 +210,8 @@ axios.all(promises)
     });
 
     database.close();
+}).catch((error) =>{
+    console.log("error2\n");
 });
 
 //}

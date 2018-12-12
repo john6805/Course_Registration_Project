@@ -154,15 +154,15 @@ app.post('/courses', (request, response) => {
 app.post('/register', (request, response) => {
 	let university_id = request.body.university_id;
 	let crn = request.body.crn;
+	let input = crn;
 	let registered;
-	let input = university_id;
 	let waitlisted = false;
 	database.get(`SELECT capacity, registered FROM sections WHERE crn = ?`, [crn], (err, row) => {
 		if(err)
 		{
 			return console.log(err.message);
 		}
-		if(row.registered.indexOf(university_id) < 0)
+		if(row.registered.indexOf(university_id) >= 0)
 		{
 			response.send({
 				err: "Student already registered"
@@ -171,11 +171,10 @@ app.post('/register', (request, response) => {
 		}
 		if(row.registered.split(',').length >= row.capacity)
 		{
-			registered = row.registered + ',W' + university_id;
-			input = 'W' + university_id;
+			input = 'W' + crn;
 			waitlisted = true;
 		}
-		else if(row.registered.length == 0)
+		if(row.registered.length == 0)
 		{
 			registered = university_id;
 		}
@@ -183,12 +182,12 @@ app.post('/register', (request, response) => {
 		{
 			registered = row.registered + ',' + university_id;
 		}
-		database.run(`SELECT registered_courses FROM people WHERE university_id = ?`, [university_id], (err, row) => {
+		database.get(`SELECT registered_courses FROM people WHERE university_id = ?`, [university_id], (err, row) => {
 			if(err)
 			{
 				console.log(err.message);
 			}
-			if(row.registered_courses.length != 0)
+			if(row.registered_courses != null && row.registered_courses.length != 0)
 			{
 				input = row.registered_courses + ',' + input;
 			}
@@ -202,7 +201,6 @@ app.post('/register', (request, response) => {
 			if(err){
 				return console.log(err.message);
 			}
-			console.log(`crn: ` + crn + `\nregistered list: ` + registered);
 			response.send({
 				waitlisted: waitlisted
 			});
@@ -234,6 +232,22 @@ app.post('/check_user', (request, response) => {
 		}
 	});
 });
+
+app.get('/get_user_info', (request, response) => {
+	let student_list = request.query.student_list.split(',');
+	console.log(student_list);
+	let sql = `SELECT university_id, first_name, last_name FROM people WHERE university_id in (` + student_list.map(() => { return '?' }).join(',') + ` )`;
+	database.all(sql, student_list, (err, rows) => {
+		if(err){
+			return console.log(err.message);
+		}
+		console.log(rows);
+		response.send({
+			students: rows
+		});
+
+	});
+})
 
 app.post('/create_user', (request, response) => {
 	let university_id = request.body.university_id;

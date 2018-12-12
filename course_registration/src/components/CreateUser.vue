@@ -91,7 +91,6 @@
                     {
                         self.input.university_id = '';
                         self.input.password = '';
-                        self.input.position = '';
                         self.input.first_name = '';
                         self.input.last_name = '';
                         self.input.confirm_password = '';
@@ -124,6 +123,7 @@
     background: #FFFFFF;
     box-shadow: 2px 2px 20px 1px;
     overflow-x: auto;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
   }

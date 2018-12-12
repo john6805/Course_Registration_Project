@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link v-if="authenticated" to="/home">Home</router-link> |
-      <router-link v-if="authenticated" to="/about">About</router-link> |
-      <router-link v-if="authenticated" to="/login" v-on:click.native="logout()" replace>Logout</router-link>
+    <div id="nav" v-if="authenticated">
+      <router-link to="/home">Home</router-link> |
+      <router-link to="/about">About</router-link> |
+      <router-link to="/login" v-on:click.native="logout()" replace>Logout</router-link>
     </div>
     <router-view @authenticated="setAuthenticated" @user_info="setUserInfo" :authenticated="authenticated" :user_info="user_info" />
   </div>

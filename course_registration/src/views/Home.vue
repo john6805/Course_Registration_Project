@@ -1,6 +1,7 @@
 <template>
   <div class="home">
-    <p> Create Registration Page Here</p>
+    <h1>Course Registration</h1>
+    <h4>Select a Department</h4>
     <div id="list-container">
       <ul id='department-list'>
         <li v-for='department in departments' :key='department.subject'>
@@ -26,6 +27,7 @@
             <th> Professor </th>
             <th> Credits </th>
             <th> CRN </th>
+            <th> Capacity </th>
             <th> Registered </th>
             <th> Waitlisted </th>
           </tr>
@@ -41,18 +43,23 @@
             <td> {{course.room}} </td>
             <td> {{course.professors}} </td>
             <td> {{course.credits}} </td>
-            <td> {{course.crn}} <td>
-            <td> {{course.numberOfRegistered}} <td>
-            <td> {{course.numberOfWaitlisted}} <td>
+            <td> {{course.crn}} </td>
+            <td> {{course.capacity}} </td>
+            <td> {{course.registered_count}} </td>
+            <td> {{course.waitlist_count}} </td>
           </tr>
           <tr v-show="course.expand">
             <td colspan="2">{{course.times}}</td>
             <td colspan="3">{{course.description}} </td>
-            <td><button @click="register(course.crn)">Register</button></td>
+            <td>
+              <button v-if="user.position == 'Student'" @click="register(course.crn)">Register</button>
+              <button v-if="user.position == 'Faculty'" @click="openRoster(course)">Roster</button>
+            </td>
           </tr>
         </div>
       </tbody>
     </table>
+    <roster v-show="open_roster" @close="closeRoster()" :registered_list="registered_list" :waitlist="waitlist" />
   </div>
 </template>
 
@@ -60,6 +67,7 @@
 // @ is an alias to src
 //url for getting departments - http://localhost:8012/departments
 import axios from 'axios';
+import roster from '../components/Roster.vue'
 
 export default {
   name: 'home',
@@ -71,8 +79,14 @@ export default {
       course_number: '',
       crn: '',
       courses: [],
-      user: {}
+      user: {},
+      open_roster: false,
+      registered_list: [],
+      waitlist: []
     }
+  },
+  components: {
+    roster
   },
   methods: {
     getDepartments: function() {
@@ -101,27 +115,20 @@ export default {
         self.courses = response.data;
         self.courses.forEach((course => {
           self.$set(course, 'expand', false);
-          var numWaitlisted = 0;
-          //calculate registered and waitlisted
-          if(course.registered != null){
-            var numRegistered = course.registered;
-            var registered = 0;
-            numRegistered = numRegistered.split(",");
-            for(var i=0; i<numRegistered.length; i++){
-              if(numRegistered[i].charAt(0) != "W"){
-                registered = registered + 1;
-              }else{
-                numWaitlisted = numWaitlisted + 1;
-              }
+          
+          let registered_count = 0;
+          let waitlist_count = 0;
+          
+          if(course.registered.length != 0)
+          {
+            if(course.registered.split(',').length > course.capacity)
+            {
+              waitlist_count = course.registered.split(',').length - course.capacity;
             }
-          }else{
-            var numRegistered = course.registered;
-            var registered = 0;
-            numWaitlisted = 0;
+            registered_count = course.registered.split(',').length - waitlist_count;
           }
-          console.log(numWaitlisted);
-          self.$set(course, 'numberOfWaitlisted', numWaitlisted);
-          self.$set(course, 'numberOfRegistered', registered);
+          self.$set(course, 'waitlist_count', waitlist_count);
+          self.$set(course, 'registered_count', registered_count);
         }));
       });
     },
@@ -144,6 +151,38 @@ export default {
           window.alert(response.data.err);
         }
       });
+    },
+    openRoster(course) {
+      let self = this;
+
+      if(course.registered.length == 0)
+      {
+        self.registered_list = [];
+        self.waitlist = [];
+        self.open_roster = true;
+      }
+      axios.get('http://localhost:8012/get_user_info',{
+        params: {
+          student_list: course.registered
+        }
+      }).then((response) => {
+        let registered_list = [];
+        let waitlist = [];
+
+        if(response.data.students.length > course.capacity){
+          registered_list = response.data.students.slice(0, course.capacity);
+          waitlist = response.data.students.slice(course.capacity, response.data.students.length);
+        }
+        else {
+          registered_list = response.data.students;
+        }
+        self.registered_list = registered_list;
+        self.waitlist = waitlist;
+        self.open_roster = true;
+      });
+    }, 
+    closeRoster() {
+      this.open_roster = false;
     }
   },
   beforeMount(){
@@ -156,11 +195,10 @@ export default {
 </script>
 
 <style>
-  #list-container label {
+  #list-container label{
     display: block;
     padding-left: 15px;
     text-indent: -15px;
-    list-style-type: none;
   }
   #list-container input[type="checkbox"] {
     width: 13px;
@@ -171,6 +209,13 @@ export default {
     position: relative;
     top: -1px;
     *overflow: hidden;
+  }
+  #department-list {
+    height: 850px;
+    -webkit-column-count: 4;
+    -moz-column-count: 4;
+    column-count: 4;
+    list-style-type: none;
   }
   th {
     width:15%
@@ -187,6 +232,7 @@ export default {
 
 .accordion-header {
     cursor: pointer;
+    background-color: lightgray;
 }
 
 .accordion-body   {
