@@ -56,7 +56,7 @@ next: open chrome and navigate to http://localhost:8012 to view the application.
 <br />
 5 additional points for each item completed on the list below<br />
 
-[]Provide loading animation while results are being fetched from the server<br />
+[x]Provide loading animation while results are being fetched from the server<br />
 []Color code rows in course listings<br />
 <br />
 Example: <br />
@@ -73,4 +73,16 @@ Background green if registered<br />
 Students can view their wishlist and click to "register for all"
 Successfully register if openings available
 Put on waitlist if section is full
+<br />
+<br />
+*New Stuff* <br /> <br/>
+[]Create a WebSocket server and have each browser client connect to it<br />
+[]Whenever a student registers or drops a course, all other clients should be notified, and the registration counts on their pages immediately updated accordingly<br />
+[]Also update faculty roster<br />
+[]If some student drops and the logged in student is first on the waitlist for that course, then display a notice stating that they have moved from the waitlist to registered<br />
+[]Also update background color to indicate registered<br />
+[]10 additional points for completing a Journey Map of current registration process<br />
+
+[]Download StudentUG_RegisterForCourses.docx from Canvas and fill in form as a group<br />
+[]5 additional points for adding a page to your website for what your registration system does better than the current one (Include text and images highlighting differences)<br />
 

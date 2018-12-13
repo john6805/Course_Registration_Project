@@ -60,7 +60,9 @@
       </tbody>
     </table>
     <roster v-show="open_roster" @close="closeRoster()" :registered_list="registered_list" :waitlist="waitlist" />
-    <square v-bind:loading="isLoading"></square>
+    <div v-show="isLoading" class="modal-backdrop">
+      <ring-loader id="loader"></ring-loader>
+    </div>
   </div>
 </template>
 
@@ -69,6 +71,8 @@
 //url for getting departments - http://localhost:8012/departments
 import axios from 'axios';
 import roster from '../components/Roster.vue'
+import RingLoader from 'vue-spinner/src/RingLoader.vue'
+import { setTimeout } from 'timers';
 
 export default {
   name: 'home',
@@ -88,7 +92,8 @@ export default {
     }
   },
   components: {
-    roster
+    roster,
+    RingLoader
   },
   methods: {
     getDepartments: function() {
@@ -106,38 +111,40 @@ export default {
         return;
       }
       self.isLoading = true;
-      axios({
-        method: 'post',
-        url: 'http://localhost:8012/courses',
-        data: {
-          subjects: self.subjects,
-          course_number: self.course_number,
-          crn: self.crn
-        }
-      }).then((response) => {
-        self.courses = response.data;
-
-        self.courses.sort(self.compare);
-
-        self.courses.forEach((course => {
-          self.$set(course, 'expand', false);
-          
-          let registered_count = 0;
-          let waitlist_count = 0;
-          
-          if(course.registered.length != 0)
-          {
-            if(course.registered.split(',').length > course.capacity)
-            {
-              waitlist_count = course.registered.split(',').length - course.capacity;
-            }
-            registered_count = course.registered.split(',').length - waitlist_count;
+      setTimeout(() => {
+        axios({
+          method: 'post',
+          url: 'http://localhost:8012/courses',
+          data: {
+            subjects: self.subjects,
+            course_number: self.course_number,
+            crn: self.crn
           }
-          self.$set(course, 'waitlist_count', waitlist_count);
-          self.$set(course, 'registered_count', registered_count);
+        }).then((response) => {
+          self.courses = response.data;
+
+          self.courses.sort(self.compare);
+
+          self.courses.forEach((course => {
+            self.$set(course, 'expand', false);
+            
+            let registered_count = 0;
+            let waitlist_count = 0;
+            
+            if(course.registered.length != 0)
+            {
+              if(course.registered.split(',').length > course.capacity)
+              {
+                waitlist_count = course.registered.split(',').length - course.capacity;
+              }
+              registered_count = course.registered.split(',').length - waitlist_count;
+            }
+            self.$set(course, 'waitlist_count', waitlist_count);
+            self.$set(course, 'registered_count', registered_count);
+          }));
           self.isLoading = false;
-        }));
-      });
+        });
+      }, 500)
     },
     toggleShow(course)
     {
@@ -146,20 +153,22 @@ export default {
     register(crn) {
       let self = this;
       self.isLoading = true;
-      axios({
-        method: 'post',
-        url: 'http://localhost:8012/register',
-        data: {
-          university_id: self.user.university_id,
-          crn: crn
-        }
-      }).then((response) => {
-        if(response.data.err)
-        {
-          window.alert(response.data.err);
-        }
-        self.isLoading = false;
-      });
+      setTimeout(() => {
+        axios({
+          method: 'post',
+          url: 'http://localhost:8012/register',
+          data: {
+            university_id: self.user.university_id,
+            crn: crn
+          }
+        }).then((response) => {
+          if(response.data.err)
+          {
+            window.alert(response.data.err);
+          }
+          self.isLoading = false;
+        });
+      }, 500)
     },
     openRoster(course) {
       let self = this;
@@ -169,26 +178,31 @@ export default {
         self.registered_list = [];
         self.waitlist = [];
         self.open_roster = true;
+        return;
       }
-      axios.get('http://localhost:8012/get_user_info',{
-        params: {
-          student_list: course.registered
-        }
-      }).then((response) => {
-        let registered_list = [];
-        let waitlist = [];
+      self.isLoading = true;
+      setTimeout(() => {
+        axios.get('http://localhost:8012/get_user_info',{
+          params: {
+            student_list: course.registered
+          }
+        }).then((response) => {
+          let registered_list = [];
+          let waitlist = [];
 
-        if(response.data.students.length > course.capacity){
-          registered_list = response.data.students.slice(0, course.capacity);
-          waitlist = response.data.students.slice(course.capacity, response.data.students.length);
-        }
-        else {
-          registered_list = response.data.students;
-        }
-        self.registered_list = registered_list;
-        self.waitlist = waitlist;
-        self.open_roster = true;
-      });
+          if(response.data.students.length > course.capacity){
+            registered_list = response.data.students.slice(0, course.capacity);
+            waitlist = response.data.students.slice(course.capacity, response.data.students.length);
+          }
+          else {
+            registered_list = response.data.students;
+          }
+          self.registered_list = registered_list;
+          self.waitlist = waitlist;
+          self.open_roster = true;
+          self.isLoading = false;
+        });
+      }, 500)
     }, 
     closeRoster() {
       this.open_roster = false;
@@ -287,6 +301,18 @@ export default {
 .body-content {
     padding: 20px;
 }
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 </style>
 
 
