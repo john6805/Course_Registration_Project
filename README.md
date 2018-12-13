@@ -37,7 +37,7 @@ next: open chrome and navigate to http://localhost:8012 to view the application.
 [x]Section crn<br />
 [x]Section number registered / capacity<br />
 [x]Section waitlist count<br />
-[]Table should be ordered (subject in alphabetical order, for each subject - course number in ascending order, for each course number - section in ascending order<br />
+[x]Table should be ordered (subject in alphabetical order, for each subject - course number in ascending order, for each course number - section in ascending order<br />
 [x]If the user clicks on any row, that section should expand to show the following (similar to class finder)<br />
 []Table of section class days/times (need table)<br />
 [x]Course description<br />

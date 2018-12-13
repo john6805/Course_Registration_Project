@@ -60,6 +60,7 @@
       </tbody>
     </table>
     <roster v-show="open_roster" @close="closeRoster()" :registered_list="registered_list" :waitlist="waitlist" />
+    <square v-bind:loading="isLoading"></square>
   </div>
 </template>
 
@@ -82,7 +83,8 @@ export default {
       user: {},
       open_roster: false,
       registered_list: [],
-      waitlist: []
+      waitlist: [],
+      isLoading: false
     }
   },
   components: {
@@ -103,6 +105,7 @@ export default {
         window.alert('Please select a subject');
         return;
       }
+      self.isLoading = true;
       axios({
         method: 'post',
         url: 'http://localhost:8012/courses',
@@ -113,6 +116,9 @@ export default {
         }
       }).then((response) => {
         self.courses = response.data;
+
+        self.courses.sort(self.compare);
+
         self.courses.forEach((course => {
           self.$set(course, 'expand', false);
           
@@ -129,6 +135,7 @@ export default {
           }
           self.$set(course, 'waitlist_count', waitlist_count);
           self.$set(course, 'registered_count', registered_count);
+          self.isLoading = false;
         }));
       });
     },
@@ -138,6 +145,7 @@ export default {
     },
     register(crn) {
       let self = this;
+      self.isLoading = true;
       axios({
         method: 'post',
         url: 'http://localhost:8012/register',
@@ -150,6 +158,7 @@ export default {
         {
           window.alert(response.data.err);
         }
+        self.isLoading = false;
       });
     },
     openRoster(course) {
@@ -183,6 +192,39 @@ export default {
     }, 
     closeRoster() {
       this.open_roster = false;
+    },
+    compare(course1, course2) {
+      const subject1 = course1.subject;
+      const subject2 = course2.subject;
+      const course_number1 = course1.course_number;
+      const course_number2 = course2.course_number;
+      const section_number1 = course1.section_number;
+      const section_number2 = course2.section_number;
+
+      let comparison;
+      if(subject1 < subject2){
+        comparison = 1;
+      }
+      else if(subject1 > subject2){
+        comparison = -1;
+      }
+      else if(course_number1 > course_number2){
+        comparison = 1;
+      }
+      else if(course_number1 < course_number2){
+        comparison = -1;
+      }
+      else if(section_number1 > section_number2){
+        comparison = 1;
+      }
+      else if(section_number1 < section_number2){
+        comparison = -1;
+      }
+      else{
+        comparison = 0;
+      }
+      
+      return comparison;
     }
   },
   beforeMount(){
