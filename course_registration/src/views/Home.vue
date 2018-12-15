@@ -52,7 +52,8 @@
             <td colspan="2">{{course.times}}</td>
             <td colspan="3">{{course.description}} </td>
             <td>
-              <button v-if="user.position == 'Student'" @click="register(course.crn)">Register</button>
+              <button v-if="user.position == 'Student'" v-show="showRegister(course)" @click="register(course)">Register</button>
+              <button v-if="user.position == 'Student'" v-show="!showRegister(course)" @click="drop(course)">Drop</button>
               <button v-if="user.position == 'Faculty'" @click="openRoster(course)">Roster</button>
             </td>
           </tr>
@@ -150,7 +151,7 @@ export default {
     {
       course.expand = !course.expand;
     },
-    register(crn) {
+    register(course) {
       let self = this;
       self.isLoading = true;
       setTimeout(() => {
@@ -159,13 +160,86 @@ export default {
           url: 'http://localhost:8012/register',
           data: {
             university_id: self.user.university_id,
-            crn: crn
+            crn: course.crn
           }
         }).then((response) => {
           if(response.data.err)
           {
+            self.isLoading = false;
             window.alert(response.data.err);
+            return;
           }
+          let crn = course.crn;
+
+          //update course registered list with university id
+          if(course.registered.length == 0)
+          {
+            course.registered = self.user.university_id;
+          }
+          else
+          {
+            course.registered = course.registered.split(',').push(self.user.university_id).toString();
+          }
+
+          //update user registered list with crn, prepended with a 'W' if on waitlist
+          if(course.registered.split(',').length > course.capacity)
+          {
+            crn = 'W' + course.crn;
+            course.waitlist_count++;
+          }
+          else
+          {
+            course.registered_count++;
+          }
+          if(self.user.registered_courses.length == 0)
+          {
+            self.user.registered_courses = crn;
+          }
+          else
+          {
+            self.user.registered_courses = self.user.registered_courses.split(',').push(crn).toString();
+          }
+          self.isLoading = false;
+        });
+      }, 500)
+    },
+    drop(course)
+    {
+      let self = this;
+      self.isLoading = true;
+      setTimeout(() => {
+        axios({
+          method: 'post',
+          url: 'http://localhost:8012/drop',
+          data: {
+            university_id: self.user.university_id,
+            crn: course.crn
+          }
+        }).then((response) => {
+          if(response.data.err)
+          {
+            self.isLoading = false;
+            window.alert(response.data.err);
+            return;
+          }
+
+          //update course registered list with university id
+          let registered = course.registered.split(',');
+          course.registered = registered.splice(registered.indexOf(self.user.university_id), 1).toString();
+
+          //update user registered list with crn
+          let registered_courses = self.user.registered_courses.split(',');
+          if(registered_courses.indexOf('W' + course.crn) >= 0)
+          {
+            self.user.registered_courses = registered_courses.splice(registered_courses.indexOf('W' + course.crn), 1).toString();
+            course.registered_count--;
+          }
+          else
+          {
+            self.user.registered_courses = registered_courses.splice(registered_courses.indexOf(course.crn), 1).toString();
+            course.waitlist_count--;
+          }
+
           self.isLoading = false;
         });
       }, 500)
@@ -206,6 +280,9 @@ export default {
     }, 
     closeRoster() {
       this.open_roster = false;
+    },
+    showRegister(course) {
+      return this.user.registered_courses.indexOf(course.crn) < 0 ? true : false;
     },
     compare(course1, course2) {
       const subject1 = course1.subject;

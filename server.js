@@ -141,15 +141,42 @@ app.post('/courses', (request, response) => {
 	}
 });
 
-// app.get('/courses', (request, response) => {
-// 	subject = request.query.subject;
-// 	full_name = request.query.full_name;
-// 	response.json(
-// 	{
-// 		subject: subject,
-// 		full_name: full_name
-// 	});
-// });
+app.post('/drop', (request, response) => {
+	let university_id = request.body.university_id;
+	let crn = request.body.crn;
+
+	database.get(`SELECT registered FROM sections WHERE crn = ?`, [crn], (err, row) => {
+		if(err)
+		{
+			return console.log(err.message);
+		}
+		let registered_list = row.registered.split(',');
+		let registered;
+		registered_list = registered_list.splice(registered_list.indexOf(university_id), 1);
+		registered = registered_list.toString();
+		database.run(`UPDATE sections SET registered = ? WHERE crn = ?`, [registered, crn], (err, row)=>{
+			if(err){
+				return console.log(err.message);
+			}
+		});
+		database.get(`SELECT registered_courses FROM people WHERE university_id = ?`, [university_id], (err, row) => {
+			if(err)
+			{
+				console.log(err.message);
+			}
+
+			let input = row.registered_courses.split(',');
+			input = input.splice(input.indexOf(crn), 1);
+			input = input.toString();
+
+			database.run(`UPDATE people SET registered_courses = ? WHERE university_id = ?`, [input, university_id], (err, row)=>{
+				if(err){
+					return console.log(err.message);
+				}
+			});
+		});
+	});
+})
 
 app.post('/register', (request, response) => {
 	let university_id = request.body.university_id;
@@ -221,7 +248,13 @@ app.post('/check_user', (request, response) => {
 		{
 			response.send({
 				auth: true,
-				user_info: row
+				user_info: {
+					first_name: row.first_name,
+					last_name: row.last_name,
+					position: row.position,
+					registered_courses: row.registered_courses,
+					university_id: row.university_id + ""
+				}
 			});
 		}
 		else 
