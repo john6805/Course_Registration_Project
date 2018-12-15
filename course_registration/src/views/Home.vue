@@ -52,8 +52,8 @@
             <td colspan="2">{{course.times}}</td>
             <td colspan="3">{{course.description}} </td>
             <td>
-              <button v-if="user.position == 'Student'" v-show="showRegister(course)" @click="register(course)">Register</button>
-              <button v-if="user.position == 'Student'" v-show="!showRegister(course)" @click="drop(course)">Drop</button>
+              <button v-if="user.position == 'Student'" v-show="course.registered.indexOf(user.university_id) < 0" @click="register(course)">Register</button>
+              <button v-if="user.position == 'Student'" v-show="course.registered.indexOf(user.university_id) >= 0" @click="drop(course)">Drop</button>
               <button v-if="user.position == 'Faculty'" @click="openRoster(course)">Roster</button>
             </td>
           </tr>
@@ -225,21 +225,25 @@ export default {
 
           //update course registered list with university id
           let registered = course.registered.split(',');
+          console.log(registered);
           course.registered = registered.splice(registered.indexOf(self.user.university_id), 1).toString();
 
           //update user registered list with crn
           let registered_courses = self.user.registered_courses.split(',');
+          console.log(registered_courses);
           if(registered_courses.indexOf('W' + course.crn) >= 0)
           {
             self.user.registered_courses = registered_courses.splice(registered_courses.indexOf('W' + course.crn), 1).toString();
-            course.registered_count--;
+            course.waitlist_count--;
           }
           else
           {
             self.user.registered_courses = registered_courses.splice(registered_courses.indexOf(course.crn), 1).toString();
-            course.waitlist_count--;
+            course.registered_count--;
           }
 
+          console.log(self.user.registered_courses);
+          console.log(course.registered);
           self.isLoading = false;
         });
       }, 500)
@@ -280,9 +284,6 @@ export default {
     }, 
     closeRoster() {
       this.open_roster = false;
-    },
-    showRegister(course) {
-      return this.user.registered_courses.indexOf(course.crn) < 0 ? true : false;
     },
     compare(course1, course2) {
       const subject1 = course1.subject;

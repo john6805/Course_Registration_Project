@@ -1,0 +1,27 @@
+{
+  "name": "course_registration_project",
+  "version": "1.0.0",
+  "description": "#RUNNING INSTRUCTIONS first: open a terminal and navigate to the directory 'course_registration' next: enter the command 'npm run build' (if you do not have all of the dependencies installed,         run the command 'npm install' first)",
+  "main": "server.js",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.4",
+    "sqlite3": "^4.0.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/john6805/Course_Registration_Project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/john6805/Course_Registration_Project/issues"
+  },
+  "homepage": "https://github.com/john6805/Course_Registration_Project#readme"
+}

@@ -173,6 +173,9 @@ app.post('/drop', (request, response) => {
 				if(err){
 					return console.log(err.message);
 				}
+				response.send({
+					success: 'Class dropped'
+				});
 			});
 		});
 	});
