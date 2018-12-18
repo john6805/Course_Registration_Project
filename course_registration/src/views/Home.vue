@@ -18,10 +18,11 @@
     <button v-on:click="getCourses">Search</button>
     
     <div align="center">
-      <button v-on:click="getUserSchedule">View Current Schedule</button>
+      <button v-if="!showSchedule" v-on:click="getUserSchedule">View Schedule</button>
+      <button v-if="showSchedule" v-on:click="hideUserSchedule">Hide Schedule</button>
     </div>
 
-    <table>
+    <table v-show="showSchedule">
       <thead>
         <div style="width: 100%;">
           <tr style="width: 100%;">
@@ -115,6 +116,7 @@ export default {
       registered_list: [],
       waitlist: [],
       isLoading: false,
+      showSchedule: false,
       users_course_list: []
     }
   },
@@ -218,7 +220,7 @@ export default {
             course.registered_count++;
           }
 
-          if(self.user.registered_courses.length == 0)
+          if(self.user.registered_courses == null || self.user.registered_courses.length == 0)
           {
             self.user.registered_courses = crn;
           }
@@ -316,6 +318,9 @@ export default {
     closeRoster() {
       this.open_roster = false;
     },
+    hideUserSchedule() {
+      this.showSchedule = false;
+    },
     compare(course1, course2) {
       const subject1 = course1.subject;
       const subject2 = course2.subject;
@@ -354,6 +359,10 @@ export default {
       let local_course_list;
 
       self.users_course_list = [];
+      if(self.user.registered_courses == null)
+      {
+        return;
+      }
 
       local_course_list = self.user.registered_courses.split(',');
       if(self.user.registered_courses.length > 0){
@@ -367,6 +376,7 @@ export default {
             }
           }).then((response) => {
             self.users_course_list.push(response.data[0]);
+            self.showSchedule = true;
           }); 
         });
       }
