@@ -36,10 +36,7 @@ app.post('/courses', (request, response) => {
 	let course_number;
 	let crn;
 	console.log(request.body);
-	if(!request.body.subjects){
-		//must provide at least one subject
-		return;
-	}
+
 	subjects = request.body.subjects;
 	course_number = request.body.course_number;
 	crn = request.body.crn;

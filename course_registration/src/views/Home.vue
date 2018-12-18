@@ -16,6 +16,31 @@
     <input type="text" v-model="crn" placeholder="crn">
     <br>
     <button v-on:click="getCourses">Search</button>
+    
+    <div align="center">
+      <button v-on:click="getUserSchedule">View Current Schedule</button>
+    </div>
+
+    <table>
+      <thead>
+        <div style="width: 100%;">
+          <tr style="width: 100%;">
+            <th> Your Schedule </th>
+          </tr>
+        </div>
+      </thead>
+      <tbody>
+        <div v-for='course in users_course_list' :key='course.crn'>
+          <td>{{course.times}}</td>
+          <td> {{course.subject}} {{course.course_number}} - {{course.section_number}}</td>
+          <td>{{course.name}}</td>
+          <td>
+            <button @click="drop(course)">Drop</button>
+          </td>
+        </div>
+      </tbody>
+    </table>
+
     <table>
       <thead>
         <div style="width: 100%;">
@@ -89,7 +114,8 @@ export default {
       open_roster: false,
       registered_list: [],
       waitlist: [],
-      isLoading: false
+      isLoading: false,
+      users_course_list: []
     }
   },
   components: {
@@ -169,7 +195,7 @@ export default {
             window.alert(response.data.err);
             return;
           }
-          let crn = course.crn;
+          let crn = course.crn + '';
 
           //update course registered list with university id
           if(course.registered.length == 0)
@@ -191,14 +217,19 @@ export default {
           {
             course.registered_count++;
           }
+
           if(self.user.registered_courses.length == 0)
           {
             self.user.registered_courses = crn;
           }
           else
           {
-            self.user.registered_courses = self.user.registered_courses.split(',').push(crn).toString();
+            let dummy = self.user.registered_courses.split(',');
+            dummy.push(crn);
+            self.user.registered_courses = dummy.toString();
           }
+          self.getUserSchedule();
+
           self.isLoading = false;
         });
       }, 500)
@@ -317,6 +348,28 @@ export default {
       }
       
       return comparison;
+    },
+    getUserSchedule() {
+      let self = this;
+      let local_course_list;
+
+      self.users_course_list = [];
+
+      local_course_list = self.user.registered_courses.split(',');
+      if(self.user.registered_courses.length > 0){
+        local_course_list.forEach((course_crn) => {
+          //axios post to '/courses' with crn param
+          axios({
+            method: 'post',
+            url: 'http://localhost:8012/courses',
+            data: {
+              crn: course_crn
+            }
+          }).then((response) => {
+            self.users_course_list.push(response.data[0]);
+          }); 
+        });
+      }
     }
   },
   beforeMount(){
