@@ -35,7 +35,6 @@ app.post('/courses', (request, response) => {
 	let subjects;
 	let course_number;
 	let crn;
-	console.log(request.body);
 
 	subjects = request.body.subjects;
 	course_number = request.body.course_number;
@@ -149,7 +148,7 @@ app.post('/drop', (request, response) => {
 		}
 		let registered_list = row.registered.split(',');
 		let registered;
-		registered_list = registered_list.splice(registered_list.indexOf(university_id), 1);
+		registered_list.splice(registered_list.indexOf(university_id), 1);
 		registered = registered_list.toString();
 		database.run(`UPDATE sections SET registered = ? WHERE crn = ?`, [registered, crn], (err, row)=>{
 			if(err){
@@ -163,7 +162,7 @@ app.post('/drop', (request, response) => {
 			}
 
 			let input = row.registered_courses.split(',');
-			input = input.splice(input.indexOf(crn), 1);
+			input.splice(input.indexOf(crn), 1);
 			input = input.toString();
 
 			database.run(`UPDATE people SET registered_courses = ? WHERE university_id = ?`, [input, university_id], (err, row)=>{
@@ -268,13 +267,11 @@ app.post('/check_user', (request, response) => {
 
 app.get('/get_user_info', (request, response) => {
 	let student_list = request.query.student_list.split(',');
-	console.log(student_list);
 	let sql = `SELECT university_id, first_name, last_name FROM people WHERE university_id in (` + student_list.map(() => { return '?' }).join(',') + ` )`;
 	database.all(sql, student_list, (err, rows) => {
 		if(err){
 			return console.log(err.message);
 		}
-		console.log(rows);
 		response.send({
 			students: rows
 		});

@@ -181,6 +181,7 @@ export default {
     },
     register(course) {
       let self = this;
+      let dummy;
       self.isLoading = true;
       setTimeout(() => {
         axios({
@@ -206,7 +207,9 @@ export default {
           }
           else
           {
-            course.registered = course.registered.split(',').push(self.user.university_id).toString();
+            dummy = course.registered.split(',');
+            dummy.push(self.user.university_id);
+            course.registered = dummy.toString();
           }
 
           //update user registered list with crn, prepended with a 'W' if on waitlist
@@ -226,7 +229,7 @@ export default {
           }
           else
           {
-            let dummy = self.user.registered_courses.split(',');
+            dummy = self.user.registered_courses.split(',');
             dummy.push(crn);
             self.user.registered_courses = dummy.toString();
           }
@@ -239,6 +242,7 @@ export default {
     drop(course)
     {
       let self = this;
+
       self.isLoading = true;
       setTimeout(() => {
         axios({
@@ -256,27 +260,41 @@ export default {
             return;
           }
 
-          //update course registered list with university id
-          let registered = course.registered.split(',');
-          console.log(registered);
-          course.registered = registered.splice(registered.indexOf(self.user.university_id), 1).toString();
-
           //update user registered list with crn
           let registered_courses = self.user.registered_courses.split(',');
           console.log(registered_courses);
           if(registered_courses.indexOf('W' + course.crn) >= 0)
           {
-            self.user.registered_courses = registered_courses.splice(registered_courses.indexOf('W' + course.crn), 1).toString();
-            course.waitlist_count--;
+            registered_courses.splice(registered_courses.indexOf('W' + course.crn), 1);
+            self.user.registered_courses = registered_courses.toString();
           }
           else
           {
-            self.user.registered_courses = registered_courses.splice(registered_courses.indexOf(course.crn), 1).toString();
-            course.registered_count--;
+            registered_courses.splice(registered_courses.indexOf(course.crn), 1);
+            self.user.registered_courses = registered_courses.toString();
           }
 
-          console.log(self.user.registered_courses);
-          console.log(course.registered);
+          //update course information if on page
+          self.courses.forEach((row) => {
+            if(row.crn === course.crn)
+            {
+              let registered = row.registered.split(',');
+              let index = registered.indexOf(self.user.university_id);
+              registered.splice(index, 1);
+              row.registered = registered.toString();
+
+              if(row.waitlist_count != 0)
+              {
+                row.waitlist_count--;
+              }
+              else 
+              {
+                row.registered_count--;
+              }
+            }
+          });
+
+          self.getUserSchedule();
           self.isLoading = false;
         });
       }, 500)
