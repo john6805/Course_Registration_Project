@@ -43,7 +43,7 @@ next: open chrome and navigate to http://localhost:8012 to view the application.
 [x]Course description<br />
 [x]Register button (Only if user has position Student)<br />
 [x]Send POST request (again using XMLHttpRequest) to register / add to the waitlist<br />
-[]Update registered/waitlist count in table when student registers<br />
+[x]Update registered/waitlist count in table when student registers<br />
 [x]Should result in error if student already registered for that class<br />
 [x]View Roster button (Only if user has position Faculty)<br />
 [x]Show list of registered / waitlisted students (university_id, first name, last name)<br />
@@ -67,7 +67,7 @@ Background green if registered<br />
 [x]Replace "register" button with "drop" button for Students in sections they are currently registered (or waitlisted for) Should update the database accordingly<br />
 []Automatically move the first person on a waitlist to registered if a registered student drops<br />
 []Prevent students from "double registering" - registering for two separate classes that have a time conflict<br />
-[]Allow students to view schedule - Table with dates/times of all courses currently registered for - Can drop from this view too<br />
+[x]Allow students to view schedule - Table with dates/times of all courses currently registered for - Can drop from this view too<br />
 []Create a pre-registration system for students<br />
 <br />Allow students to "pre-register" for a course (i.e. save it to a wishlist)
 Students can view their wishlist and click to "register for all"

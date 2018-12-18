@@ -373,6 +373,7 @@ export default {
     getUserSchedule() {
       let self = this;
       let local_course_list;
+      let local_crn;
 
       self.users_course_list = [];
       if(self.user.registered_courses == null)
@@ -384,11 +385,16 @@ export default {
       if(self.user.registered_courses.length > 0){
         local_course_list.forEach((course_crn) => {
           //axios post to '/courses' with crn param
+          local_crn = course_crn;
+          if(course_crn.charAt(0) == 'W')
+          {
+            local_crn = course_crn.substring(1);
+          }
           axios({
             method: 'post',
             url: 'http://localhost:8012/courses',
             data: {
-              crn: course_crn
+              crn: local_crn
             }
           }).then((response) => {
             self.users_course_list.push(response.data[0]);
