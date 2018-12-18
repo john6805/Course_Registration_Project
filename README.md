@@ -26,7 +26,7 @@ next: open chrome and navigate to http://localhost:8012 to view the application.
 [x]Require at least one checked<br />
 [x]Text box for course_number<br />
 [x]Text box for section crn<br />
-[]Course Section Table (need to format)<br />
+[x]Course Section Table (need to format)<br />
 [x]Course subject (4 letter department code)<br />
 [x]Course number<br />
 [x]Course section<br />
@@ -64,7 +64,7 @@ Background light gray if not registered<br />
 Background yellow if waitlisted<br />
 Background green if registered<br />
 <br />
-[]Replace "register" button with "drop" button for Students in sections they are currently registered (or waitlisted for) Should update the database accordingly<br />
+[x]Replace "register" button with "drop" button for Students in sections they are currently registered (or waitlisted for) Should update the database accordingly<br />
 []Automatically move the first person on a waitlist to registered if a registered student drops<br />
 []Prevent students from "double registering" - registering for two separate classes that have a time conflict<br />
 []Allow students to view schedule - Table with dates/times of all courses currently registered for - Can drop from this view too<br />

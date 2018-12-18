@@ -42,25 +42,23 @@
       </tbody>
     </table>
 
-    <table>
+    <table id="course-table">
       <thead>
-        <div style="width: 100%;">
-          <tr style="width: 100%;">
-            <th> Subject </th>
-            <th> Name </th>
-            <th> Building </th>
-            <th> Room </th>
-            <th> Professor </th>
-            <th> Credits </th>
-            <th> CRN </th>
-            <th> Capacity </th>
-            <th> Registered </th>
-            <th> Waitlisted </th>
-          </tr>
-        </div>
+        <tr style="width: 100%;">
+          <th> Subject </th>
+          <th> Name </th>
+          <th> Building </th>
+          <th> Room </th>
+          <th> Professor </th>
+          <th> Credits </th>
+          <th> CRN </th>
+          <th> Capacity </th>
+          <th> Registered </th>
+          <th> Waitlisted </th>
+        </tr>
       </thead>
       <tbody>
-        <div v-for='course in courses' :key='course.crn'>
+        <template v-for='course in courses'>
           <tr class="accordion-header" @click="toggleShow(course)">
             <td> {{course.subject}} {{course.course_number}} - {{course.section_number}}</td>
             <td> {{course.name}} </td>
@@ -76,14 +74,14 @@
           </tr>
           <tr v-show="course.expand">
             <td colspan="2">{{course.times}}</td>
-            <td colspan="3">{{course.description}} </td>
+            <td colspan="5">{{course.description}} </td>
             <td>
               <button v-if="user.position == 'Student'" v-show="course.registered.indexOf(user.university_id) < 0" @click="register(course)">Register</button>
               <button v-if="user.position == 'Student'" v-show="course.registered.indexOf(user.university_id) >= 0" @click="drop(course)">Drop</button>
               <button v-if="user.position == 'Faculty'" @click="openRoster(course)">Roster</button>
             </td>
           </tr>
-        </div>
+        </template>
       </tbody>
     </table>
     <roster v-show="open_roster" @close="closeRoster()" :registered_list="registered_list" :waitlist="waitlist" />
@@ -432,8 +430,8 @@ export default {
     column-count: 4;
     list-style-type: none;
   }
-  th {
-    width:15%
+  #course-table {
+    width: 100%;
   }
   .home {
     position: relative;
@@ -448,6 +446,15 @@ export default {
 .accordion-header {
     cursor: pointer;
     background-color: lightgray;
+}
+
+
+th {
+  text-align: left;
+}
+
+td{
+    word-wrap:normal;
 }
 
 .accordion-body   {
