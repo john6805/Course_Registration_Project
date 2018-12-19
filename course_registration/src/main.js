@@ -5,7 +5,7 @@ import VueSocketIO from 'vue-socket.io'
 
 Vue.config.productionTip = false
 Vue.use(new VueSocketIO({
-  connection: 'http://localhost:8012/'
+  connection: 'http://cisc-dean.stthomas.edu:8012/'
 }))
 
 new Vue({

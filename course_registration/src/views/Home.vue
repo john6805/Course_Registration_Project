@@ -93,7 +93,7 @@
 
 <script>
 // @ is an alias to src
-//url for getting departments - http://localhost:8012/departments
+//url for getting departments - http://cisc-dean.stthomas.edu:8012/departments
 import axios from 'axios';
 import roster from '../components/Roster.vue'
 import RingLoader from 'vue-spinner/src/RingLoader.vue'
@@ -139,7 +139,7 @@ export default {
   methods: {
     getDepartments: function() {
       let self = this;
-      axios.get('http://localhost:8012/departments')
+      axios.get('http://cisc-dean.stthomas.edu:8012/departments')
         .then((response) => {
           self.departments = response.data;
         });
@@ -155,7 +155,7 @@ export default {
       setTimeout(() => {
         axios({
           method: 'post',
-          url: 'http://localhost:8012/courses',
+          url: 'http://cisc-dean.stthomas.edu:8012/courses',
           data: {
             subjects: self.subjects,
             course_number: self.course_number,
@@ -216,7 +216,7 @@ export default {
       setTimeout(() => {
         axios({
           method: 'post',
-          url: 'http://localhost:8012/register',
+          url: 'http://cisc-dean.stthomas.edu:8012/register',
           data: {
             university_id: self.user.university_id,
             crn: course.crn,
@@ -282,7 +282,7 @@ export default {
       setTimeout(() => {
         axios({
           method: 'post',
-          url: 'http://localhost:8012/drop',
+          url: 'http://cisc-dean.stthomas.edu:8012/drop',
           data: {
             university_id: self.user.university_id,
             crn: course.crn
@@ -351,7 +351,7 @@ export default {
       }
       self.isLoading = true;
       setTimeout(() => {
-        axios.get('http://localhost:8012/get_user_info',{
+        axios.get('http://cisc-dean.stthomas.edu:8012/get_user_info',{
           params: {
             student_list: course.registered
           }
@@ -434,7 +434,7 @@ export default {
           }
           axios({
             method: 'post',
-            url: 'http://localhost:8012/courses',
+            url: 'http://cisc-dean.stthomas.edu:8012/courses',
             data: {
               crn: local_crn
             }

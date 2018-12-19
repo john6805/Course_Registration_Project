@@ -39,7 +39,7 @@
                 }
                 else
                 {
-                    axios.post('http://localhost:8012/check_user',
+                    axios.post('http://cisc-dean.stthomas.edu:8012/check_user',
                     {
                         university_id: self.input.university_id,
                         password: md5(self.input.password)
