@@ -12,6 +12,17 @@ app.use(express.static(public_dir));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+const server = app.listen(port);
+const io = require('socket.io')(server);
+console.log('Now listening on port ' + port);
+
+io.on('connection', (socket) => {
+	console.log(socket.id);
+	socket.on('REGISTER', (course) => {
+		socket.broadcast.emit('REGISTER_CHANGE', course);
+	});
+})
+
 app.get('/departments', (request, response) => {
 	let subjects;
 	if(!request.query.subject){
@@ -302,5 +313,3 @@ app.post('/create_user', (request, response) => {
 		}
 	});
 });
-app.listen(port);
-console.log('Now listening on port ' + port);

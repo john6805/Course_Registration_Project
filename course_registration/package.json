@@ -12,6 +12,7 @@
     "md5": "^2.2.1",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
+    "vue-socket.io": "^3.0.4",
     "vue-spinner": "^1.0.3"
   },
   "devDependencies": {
