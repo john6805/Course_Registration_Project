@@ -122,6 +122,19 @@ export default {
     roster,
     RingLoader
   },
+  sockets: {
+    REGISTER_CHANGE: function (course) {
+      for(var i = 0; i < this.courses.length; i++)
+      {
+        if(this.courses[i].crn == course.crn)
+        {
+          this.courses[i].registered_count = course.registered_count;
+          this.courses[i].waitlist_count = course.waitlist_count;
+          return;
+        }
+      }
+    }
+  },
   methods: {
     getDepartments: function() {
       let self = this;
@@ -265,6 +278,8 @@ export default {
           }
           self.getUserSchedule();
 
+          self.$socket.emit('REGISTER', course);
+
           self.isLoading = false;
         });
       }, 500)
@@ -323,8 +338,11 @@ export default {
               }
             }
           });
-
+          
           self.getUserSchedule();
+
+          self.$socket.emit('REGISTER', course);
+          
           self.isLoading = false;
         });
       }, 500)

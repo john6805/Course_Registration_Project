@@ -76,8 +76,8 @@ Put on waitlist if section is full
 <br />
 <br />
 *New Stuff* <br /> <br/>
-[]Create a WebSocket server and have each browser client connect to it<br />
-[]Whenever a student registers or drops a course, all other clients should be notified, and the registration counts on their pages immediately updated accordingly<br />
+[x]Create a WebSocket server and have each browser client connect to it<br />
+[x]Whenever a student registers or drops a course, all other clients should be notified, and the registration counts on their pages immediately updated accordingly<br />
 []Also update faculty roster<br />
 []If some student drops and the logged in student is first on the waitlist for that course, then display a notice stating that they have moved from the waitlist to registered<br />
 []Also update background color to indicate registered<br />
