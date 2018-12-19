@@ -130,6 +130,7 @@ export default {
         {
           this.courses[i].registered_count = course.registered_count;
           this.courses[i].waitlist_count = course.waitlist_count;
+          this.courses[i].registered = course.registered;
           return;
         }
       }

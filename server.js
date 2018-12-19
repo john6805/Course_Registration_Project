@@ -17,7 +17,6 @@ const io = require('socket.io')(server);
 console.log('Now listening on port ' + port);
 
 io.on('connection', (socket) => {
-	console.log(socket.id);
 	socket.on('REGISTER', (course) => {
 		socket.broadcast.emit('REGISTER_CHANGE', course);
 	});

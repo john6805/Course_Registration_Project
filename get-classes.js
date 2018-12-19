@@ -52,8 +52,6 @@ axios.get('https://classes.aws.stthomas.edu/json/getSubjectList.json?year=2019&t
     });
 })
 .catch(error => {
-    console.log("error1\n");
-    console.log(error);
 });
 
 //loop through each subject and get it's courses/sections
@@ -211,7 +209,6 @@ axios.all(promises)
 
     database.close();
 }).catch((error) =>{
-    console.log("error2\n");
 });
 
 //}
