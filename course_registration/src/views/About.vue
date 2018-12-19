@@ -24,7 +24,6 @@
     </p>
     <h1 style="clear: left;">Tools used</h1>
     <p>
-      Some tools we used:
       <ul>
         <li>VueJS</li>
         <li>SQLite3 Database</li>
