@@ -181,13 +181,15 @@ export default {
       let self = this;
       let dummy;
       self.isLoading = true;
+      self.getUserSchedule();
       setTimeout(() => {
         axios({
           method: 'post',
           url: 'http://localhost:8012/register',
           data: {
             university_id: self.user.university_id,
-            crn: course.crn
+            crn: course.crn,
+            times: course.times
           }
         }).then((response) => {
           if(response.data.err)
@@ -196,6 +198,36 @@ export default {
             window.alert(response.data.err);
             return;
           }
+          //begin conflict resolution
+          var local_course_times = course.times.split(",");
+          var all_course_times;
+          
+          if(self.users_course_list.length != 0){ //create string for all registered courses
+            for(var i=0; i<self.users_course_list.length; i++){
+              all_course_times = all_course_times + "," + self.users_course_list[i].times;
+            }
+            
+            var times_array = all_course_times.split(","); //create array for all registered courses
+            
+            //console.log(times_array);
+            //console.log(local_course_times);
+            
+            var register_conflict = false;
+            for(var i=0; i<local_course_times.length; i++){ //compare registered times with requested times
+              for(var j=0; j<times_array.length; j++){
+                console.log(times_array[j]+'=='+local_course_times[i]);
+                if(times_array[j]==local_course_times[i]){
+                  register_conflict = true;    
+                  alert("Registration conflict: This course conflicts with time slots of a previously registered class.");            
+                  break; //break if there is a conflict with times
+                }
+              }
+            }
+          }
+          if(register_conflict){
+            self.isLoading = false;
+            return; //return from program, not registering the class (however it still is registering?)
+          } //end conflict resolution
           let crn = course.crn + '';
 
           //update course registered list with university id
