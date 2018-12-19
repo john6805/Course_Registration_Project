@@ -59,7 +59,7 @@
       </thead>
       <tbody>
         <template v-for='course in courses'>
-          <tr class="accordion-header" @click="toggleShow(course)">
+          <tr class="accordion-header" :style="course.styleObject" @click="toggleShow(course)">  
             <td> {{course.subject}} {{course.course_number}} - {{course.section_number}}</td>
             <td> {{course.name}} </td>
             <td v-if="course.building.indexOf('No') < 0"> {{course.building}} </td>
@@ -181,6 +181,19 @@ export default {
             }
             self.$set(course, 'waitlist_count', waitlist_count);
             self.$set(course, 'registered_count', registered_count);
+
+            if(self.user.registered_courses.indexOf('W' + course.crn) >= 0)
+            {
+              self.$set(course, 'styleObject', {backgroundColor: 'lightyellow'});
+            }
+            else if(self.user.registered_courses.indexOf(course.crn) >= 0)
+            {
+              self.$set(course, 'styleObject', {backgroundColor: 'lightgreen'});
+            }
+            else
+            {
+              self.$set(course, 'styleObject', {backgroundColor: 'lightgrey'});
+            }
           }));
           self.isLoading = false;
         });
@@ -195,6 +208,7 @@ export default {
       let dummy;
       self.isLoading = true;
       self.getUserSchedule();
+      
       setTimeout(() => {
         axios({
           method: 'post',
@@ -260,10 +274,12 @@ export default {
           {
             crn = 'W' + course.crn;
             course.waitlist_count++;
+            course.styleObject.backgroundColor = 'lightyellow';
           }
           else
           {
             course.registered_count++;
+            course.styleObject.backgroundColor = 'lightgreen';
           }
 
           if(self.user.registered_courses == null || self.user.registered_courses.length == 0)
@@ -276,6 +292,7 @@ export default {
             dummy.push(crn);
             self.user.registered_courses = dummy.toString();
           }
+
           self.getUserSchedule();
 
           self.$socket.emit('REGISTER', course);
@@ -342,7 +359,7 @@ export default {
           self.getUserSchedule();
 
           self.$socket.emit('REGISTER', course);
-          
+
           self.isLoading = false;
         });
       }, 500)
@@ -502,6 +519,16 @@ export default {
 .accordion-header {
     cursor: pointer;
     background-color: lightgray;
+}
+
+.accordion-header-registered {
+    cursor: pointer;
+    background-color: lightgreen;
+}
+
+.accordion-header-waitlisted {
+    cursor: pointer;
+    background-color: lightyellow;
 }
 
 
