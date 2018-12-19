@@ -79,7 +79,7 @@
                     window.alert('Password must match!');
                     return;
                 }
-                axios.post('http://localhost:8012/create_user',
+                axios.post('http://cisc-dean.stthomas.edu:8012/create_user',
                 {
                     university_id: self.input.university_id.trim(),
                     password: md5(self.input.password.trim()),
