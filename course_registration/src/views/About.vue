@@ -29,6 +29,7 @@
         <li>VueJS</li>
         <li>SQLite3 Database</li>
         <li>Express</li>
+        <li>Socket.io</li>
         <li>Babel</li>
         <li>WebPack</li>
         <li>Skeleton</li>
