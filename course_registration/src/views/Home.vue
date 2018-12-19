@@ -214,11 +214,7 @@ export default {
       self.getUserSchedule();
 
       console.log(self.users_course_list);
-<<<<<<< HEAD
-      console.log(self.users_course_list.length);
-=======
       console.log(self.user.registered_courses);
->>>>>>> 675e27a639f016e80cc03bd72f8c8bc73b97dbd2
       //begin conflict resolution
       var local_course_times = course.times.split(",");
       var all_course_times;
