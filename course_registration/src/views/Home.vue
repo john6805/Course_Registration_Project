@@ -18,7 +18,6 @@
     <button v-on:click="getCourses">Search</button>
     <table>
       <thead>
-        <div style="width: 100%;">
           <tr style="width: 100%;">
             <th> Subject </th>
             <th> Name </th>
@@ -31,11 +30,10 @@
             <th> Registered </th>
             <th> Waitlisted </th>
           </tr>
-        </div>
       </thead>
-      <tbody>
-        <div v-for='course in courses' :key='course.crn'>
-          <tr class="accordion-header" @click="toggleShow(course)">
+      <tbody v-for='course in courses' :key='course.crn'>
+          <tr v-if="user.position == 'Student' && course.registered.indexOf(user.university_id) >= 0" class="accordion-header-registered" @click="toggleShow(course)">
+          <tr v-else class="accordion-header" @click="toggleShow(course)">
             <td> {{course.subject}} {{course.course_number}} - {{course.section_number}}</td>
             <td> {{course.name}} </td>
             <td v-if="course.building.indexOf('No') < 0"> {{course.building}} </td>
@@ -57,7 +55,6 @@
               <button v-if="user.position == 'Faculty'" @click="openRoster(course)">Roster</button>
             </td>
           </tr>
-        </div>
       </tbody>
     </table>
     <roster v-show="open_roster" @close="closeRoster()" :registered_list="registered_list" :waitlist="waitlist" />
@@ -367,6 +364,10 @@ export default {
 .accordion-header {
     cursor: pointer;
     background-color: lightgray;
+}
+.accordion-header-registered {
+    cursor: pointer;
+    background-color: green;
 }
 
 .accordion-body   {
