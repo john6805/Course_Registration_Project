@@ -196,6 +196,7 @@ export default {
       self.isLoading = true;
       self.getUserSchedule();
       console.log(self.users_course_list);
+      console.log(self.users_course_list.length);
       //begin conflict resolution
           var local_course_times = course.times.split(",");
           var all_course_times;
