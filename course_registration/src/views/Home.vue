@@ -59,7 +59,7 @@
       </thead>
       <tbody>
         <template v-for='course in courses'>
-          <tr class="accordion-header" @click="toggleShow(course)">
+          <tr class="accordion-header" :style="course.styleObject" @click="toggleShow(course)">  
             <td> {{course.subject}} {{course.course_number}} - {{course.section_number}}</td>
             <td> {{course.name}} </td>
             <td v-if="course.building.indexOf('No') < 0"> {{course.building}} </td>
@@ -181,6 +181,23 @@ export default {
             }
             self.$set(course, 'waitlist_count', waitlist_count);
             self.$set(course, 'registered_count', registered_count);
+
+            if(self.user.registered_courses == null)
+            {
+              self.$set(course, 'styleObject', {backgroundColor: 'lightgrey'});
+            }
+            else if(self.user.registered_courses.indexOf('W' + course.crn) >= 0)
+            {
+              self.$set(course, 'styleObject', {backgroundColor: 'lightyellow'});
+            }
+            else if(self.user.registered_courses.indexOf(course.crn) >= 0)
+            {
+              self.$set(course, 'styleObject', {backgroundColor: 'lightgreen'});
+            }
+            else
+            {
+              self.$set(course, 'styleObject', {backgroundColor: 'lightgrey'});
+            }
           }));
           self.isLoading = false;
         });
@@ -195,39 +212,44 @@ export default {
       let dummy;
       self.isLoading = true;
       self.getUserSchedule();
+
       console.log(self.users_course_list);
+<<<<<<< HEAD
       console.log(self.users_course_list.length);
+=======
+      console.log(self.user.registered_courses);
+>>>>>>> 675e27a639f016e80cc03bd72f8c8bc73b97dbd2
       //begin conflict resolution
-          var local_course_times = course.times.split(",");
-          var all_course_times;
-          
-          if(self.users_course_list.length){ //create string for all registered courses
-            for(var i=0; i<self.users_course_list.length; i++){
-              all_course_times = all_course_times + "," + self.users_course_list[i].times;
-            }
-            
-            var times_array = all_course_times.split(","); //create array for all registered courses
-            
-            console.log(times_array);
-            console.log(local_course_times);
-            
-            var register_conflict = false;
-            for(var i=0; i<local_course_times.length; i++){ //compare registered times with requested times
-              for(var j=0; j<times_array.length; j++){
-                console.log(times_array[j]+'=='+local_course_times[i]);
-                if(times_array[j]==local_course_times[i]){
-                  register_conflict = true;    
-                  alert("Registration conflict: This course conflicts with time slots of a previously registered course.");            
-                  i=local_course_times.length;
-                  j=times_array.length; //break if there is a conflict with times
-                }
-              }
+      var local_course_times = course.times.split(",");
+      var all_course_times;
+      
+      if(self.users_course_list.length){ //create string for all registered courses
+        for(var i=0; i<self.users_course_list.length; i++){
+          all_course_times = all_course_times + "," + self.users_course_list[i].times;
+        }
+        
+        var times_array = all_course_times.split(","); //create array for all registered courses
+        
+        console.log(times_array);
+        console.log(local_course_times);
+        
+        var register_conflict = false;
+        for(var i=0; i<local_course_times.length; i++){ //compare registered times with requested times
+          for(var j=0; j<times_array.length; j++){
+            console.log(times_array[j]+'=='+local_course_times[i]);
+            if(times_array[j]==local_course_times[i]){
+              register_conflict = true;    
+              alert("Registration conflict: This course conflicts with time slots of a previously registered course.");            
+              i=local_course_times.length;
+              j=times_array.length; //break if there is a conflict with times
             }
           }
-          if(register_conflict){
-            self.isLoading = false;
-            return;
-          } //end conflict resolution
+        }
+      }
+      if(register_conflict){
+        self.isLoading = false;
+        return;
+      } //end conflict resolution
 
       setTimeout(() => {
         axios({
@@ -263,10 +285,12 @@ export default {
           {
             crn = 'W' + course.crn;
             course.waitlist_count++;
+            course.styleObject.backgroundColor = 'lightyellow';
           }
           else
           {
             course.registered_count++;
+            course.styleObject.backgroundColor = 'lightgreen';
           }
 
           if(self.user.registered_courses == null || self.user.registered_courses.length == 0)
@@ -279,6 +303,7 @@ export default {
             dummy.push(crn);
             self.user.registered_courses = dummy.toString();
           }
+
           self.getUserSchedule();
 
           self.$socket.emit('REGISTER', course);
@@ -310,7 +335,7 @@ export default {
 
           //update user registered list with crn
           let registered_courses = self.user.registered_courses.split(',');
-          console.log(registered_courses);
+
           if(registered_courses.indexOf('W' + course.crn) >= 0)
           {
             registered_courses.splice(registered_courses.indexOf('W' + course.crn), 1);
@@ -318,7 +343,7 @@ export default {
           }
           else
           {
-            registered_courses.splice(registered_courses.indexOf(course.crn), 1);
+            registered_courses.splice(registered_courses.indexOf(course.crn + ''), 1);
             self.user.registered_courses = registered_courses.toString();
           }
 
@@ -330,6 +355,8 @@ export default {
               let index = registered.indexOf(self.user.university_id);
               registered.splice(index, 1);
               row.registered = registered.toString();
+
+              row.styleObject.backgroundColor = 'lightgrey';
 
               if(row.waitlist_count != 0)
               {
@@ -345,7 +372,7 @@ export default {
           self.getUserSchedule();
 
           self.$socket.emit('REGISTER', course);
-          
+
           self.isLoading = false;
         });
       }, 500)
@@ -505,6 +532,16 @@ export default {
 .accordion-header {
     cursor: pointer;
     background-color: lightgray;
+}
+
+.accordion-header-registered {
+    cursor: pointer;
+    background-color: lightgreen;
+}
+
+.accordion-header-waitlisted {
+    cursor: pointer;
+    background-color: lightyellow;
 }
 
 

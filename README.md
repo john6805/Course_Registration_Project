@@ -57,7 +57,7 @@ next: open chrome and navigate to http://localhost:8012 to view the application.
 5 additional points for each item completed on the list below<br />
 
 [x]Provide loading animation while results are being fetched from the server<br />
-[]Color code rows in course listings<br />
+[x]Color code rows in course listings<br />
 <br />
 Example: <br />
 Background light gray if not registered<br />
